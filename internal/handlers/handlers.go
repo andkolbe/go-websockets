@@ -2,6 +2,14 @@ package handlers
 
 import "github.com/gofiber/fiber/v2"
 
-func Home(c *fiber.Ctx) error {
-	return c.SendString("Hello, World!")
+func Login(c *fiber.Ctx) error {
+	return c.SendString("Login")
+}
+
+func Register(c *fiber.Ctx) error {
+	return c.SendString("Register")
+}
+
+func Chat(c *fiber.Ctx) error {
+	return c.SendString("Chat")
 }

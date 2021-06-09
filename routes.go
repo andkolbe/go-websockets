@@ -6,5 +6,7 @@ import (
 )
 
 func routes(app *fiber.App) {
-	app.Get("/", handlers.Home)
+	app.Get("/", handlers.Login)
+	app.Get("/register", handlers.Register)
+	app.Get("/chat", handlers.Chat)
 }
