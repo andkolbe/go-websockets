@@ -13,7 +13,35 @@ func Login(c *fiber.Ctx) error {
 }
 
 func PostLogin(c *fiber.Ctx) error {
-	return c.SendString("Login")
+	// parse data we received from the request
+	var data map[string]string
+	err := c.BodyParser(&data)
+	if err != nil {
+		return err
+	}
+
+	// Get the user from the database by their email
+	var user models.User
+
+	database.DB.Where("email = ?", data["email"]).First(&user)
+
+	// if the user is not found in the database
+	if user.ID == 0 {
+		c.Status(404)
+		return c.JSON(fiber.Map {
+			"message": "user not found",
+		})
+	}
+
+	// check their password against the database
+	if err := bcrypt.CompareHashAndPassword(user.Password, []byte(data["password"])); err != nil {
+		c.Status(400)
+		return c.JSON(fiber.Map {
+			"message": "incorrect password",
+		})
+	}
+
+	return c.JSON(user)
 }
 
 func Register(c *fiber.Ctx) error {
