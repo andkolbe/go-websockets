@@ -7,6 +7,7 @@ import (
 	"github.com/andkolbe/go-websockets/internal/database"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/template/html"
 	"github.com/joho/godotenv"
 )
 
@@ -20,7 +21,11 @@ func main() {
 
 	database.Connect(dbConnect)
 
-	app := fiber.New()
+	// Initialize standard Go html template engine
+	engine := html.New("./views", ".html")
+	app := fiber.New(fiber.Config {
+		Views: engine,
+	})
 
 	app.Use(cors.New(cors.Config{
 		AllowCredentials: true, // set to true so the back end can pass the cookie to the front end
