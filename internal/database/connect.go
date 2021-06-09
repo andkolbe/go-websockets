@@ -6,6 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
+// create this variable so we can use the db connection inside of the PostRegister handler
 var DB *gorm.DB
 
 func Connect(dbConnect string) {
