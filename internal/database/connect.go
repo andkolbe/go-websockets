@@ -17,5 +17,5 @@ func Connect(dbConnect string) {
 
 	DB = conn
 
-	conn.AutoMigrate(&models.User{})
+	conn.AutoMigrate(&models.User{}, &models.PasswordReset{})
 }
