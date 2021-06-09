@@ -11,4 +11,8 @@ func routes(app *fiber.App) {
 	app.Get("/register", handlers.Register)
 	app.Post("/register", handlers.PostRegister)
 	app.Get("/chat", handlers.Chat)
+	app.Get("/api/user", handlers.User)
+	app.Post("/api/logout", handlers.Logout)
+	// app.Post("/api/forgot", handlers.Forgot)
+	// app.Post("/api/reset", handlers.Reset)
 }
