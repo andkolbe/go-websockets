@@ -23,5 +23,5 @@ func main() {
 
 	routes(app)
 
-	app.Listen(":3000")
+	app.Listen("127.0.0.1:3000")
 }

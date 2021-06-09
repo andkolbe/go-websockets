@@ -1,7 +1,7 @@
 package database
 
 import (
-	"fmt"
+	"github.com/andkolbe/go-websockets/internal/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -16,5 +16,5 @@ func Connect(dbConnect string) {
 
 	DB = conn
 
-	fmt.Println(DB)
+	conn.AutoMigrate(&models.User{})
 }

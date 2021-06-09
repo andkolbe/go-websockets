@@ -18,8 +18,8 @@ func Register(c *fiber.Ctx) error {
 }
 
 func PostRegister(c *fiber.Ctx) error {
-	user := models.User{
-		
+	user := models.User {
+
 	}
 
 	return c.JSON(user)
