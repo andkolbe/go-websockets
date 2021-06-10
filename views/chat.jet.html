@@ -1,12 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-</head>
+{{extends "./layouts/layout.jet.html"}}
+{{block css()}}
+<style>
+    .chatbox {
+        outline: 1px solid blue;
+        min-height: 500px;
+        padding: 0.5em;
+        background-color: #EEF2FF;
+    }
+</style>
+{{end}}
+
+
+
+{{block body()}}
 <body>
-    <h1>Chat</h1>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <h1>Chat</h1>
+                <hr>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <h3>Chat</h3>
+
+                <div class="form-group">
+                    <label for="username">Username:</label>
+                    <input type="text" name="username" id="username" class="form-control" autocomplete="off">
+                </div>
+
+                <div class="form-group">
+                    <label for="username">Message:</label>
+                    <input type="text" name="message" id="message" class="form-control" autocomplete="off">
+                </div>
+
+                <input type="hidden" name="action" id="action">
+
+                <hr>
+
+                <div id="output" class="chatbox"></div>
+
+            </div>
+            <div class="col-md-4">
+                <h3>Who's Online</h3>
+            </div>
+        </div>
+    </div>
 </body>
-</html>
+
+
+{{end}}
+
+
+{{block js()}}
+<script>
+    let socket = null; // declare it so we can use it on other javascript functions on the page
+
+    // wait until the document is loaded and then connect to the websocket
+    document.addEventListener("DOMContentLoaded", function() {
+        socket = new WebSocket("ws://127.0.0.1:8080/ws")
+
+        socket.onopen = () => {
+            console.log("Sucessfully connected!")
+        }
+
+        socket.onclose = () => {
+            console.log("Connection closed")
+        }
+
+        socket.onerror = error => {
+            console.log("There was an error")
+        }
+
+        socket.onmessage = msg => {
+            // log whatever we get back from the server
+            console.log(msg)
+        }
+    })
+</script>
+{{end}}

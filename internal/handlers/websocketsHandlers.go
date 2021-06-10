@@ -14,12 +14,24 @@ var upgradeConnection = websocket.Upgrader{
 	CheckOrigin:     func(r *http.Request) bool { return true },
 }
 
-// all the fields we will be sending back to the client from the websockets server
+// the type of information we will be sending back to the client from the websockets server
 type WSJSONResponse struct {
 	Action         string   `json:"action"`
 	Message        string   `json:"message"`
 	MessageType    string   `json:"message_type"`
 	ConnectedUsers []string `json:"connected_users"`
+}
+
+type WebSocketConnection struct {
+	*websocket.Conn
+}
+
+// the type of information we are sending from the client to the websockets server
+type WsPaylod struct {
+	Action   string              `json:"action"`
+	Username string              `json:"username"`
+	Message  string              `json:"message"`
+	Conn     WebSocketConnection `json:"_"`
 }
 
 // upgrades connection to websockets and sends back a JSON response
@@ -41,6 +53,3 @@ func WsEndPoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
-
-
-
