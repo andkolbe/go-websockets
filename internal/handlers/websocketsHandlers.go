@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 
 	"github.com/gorilla/websocket"
 )
@@ -53,7 +54,7 @@ func WsEndPoint(w http.ResponseWriter, r *http.Request) {
 
 	// when someone new joins the chatroom, add them to the clients map
 	conn := WebSocketConnection{Conn: ws}
-	clients[conn] = ""
+	clients[conn] = "" // initialize with 0 clients connected
 
 	err = ws.WriteJSON(response)
 	if err != nil {
@@ -90,10 +91,31 @@ func ListenToWSChannel() {
 	for {
 		e := <- wsChan
 
-		response.Action = "Got Here"
-		response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
-		broadcaseToAll(response) // broadcase response to all of the connected users
+		switch e.Action {
+		case "username": // if the Action on the event is "username"
+			// get a list of user and send it back via the broadcast function
+			clients[e.Conn] = e.Username
+			users := getUserList()
+			response.Action = "list_users"
+			response.ConnectedUsers  = users
+			broadcaseToAll(response)
+		}
+
+		// response.Action = "Got Here"
+		// response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
+		// broadcaseToAll(response) // broadcase response to all of the connected users
 	}
+}
+
+func getUserList() []string {
+	var userList []string
+
+	for _, x := range clients {
+		userList = append(userList, x)
+	}
+	sort.Strings(userList)
+
+	return userList
 }
 
 // broadcase response to all of the connected users

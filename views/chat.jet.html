@@ -13,6 +13,7 @@
 
 
 {{block body()}}
+
 <body>
     <div class="container">
         <div class="row">
@@ -44,6 +45,8 @@
             </div>
             <div class="col-md-4">
                 <h3>Who's Online</h3>
+
+                <ul id="online_users"></ul>
             </div>
         </div>
     </div>
@@ -58,7 +61,7 @@
     let socket = null; // declare it so we can use it on other javascript functions on the page
 
     // wait until the document is loaded and then connect to the websocket
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         socket = new WebSocket("ws://127.0.0.1:8080/ws")
 
         socket.onopen = () => {
@@ -74,10 +77,35 @@
         }
 
         socket.onmessage = msg => {
-            // log whatever we get back from the server
-            let j = JSON.parse(msg.data)
-            console.log(j)
+            let data = JSON.parse(msg.data)
+            console.log("Action is", data.action)
+
+            switch (data.action) {
+                case "list_users":
+                    let ul = document.getElementById("online_users")
+                    // every time a new user conencts, empty out the list so we can repopulate it with new updated users list
+                    while (ul.firstChild) ul.removeChild(ul.firstChild)
+
+                    // if we have any users, loop through them, create an li, populate the li with the user data, and append the li to the ul
+                    if (data.connected_users.length > 0) {
+                        data.connected_users.forEach(user => {
+                            let li = document.createElement("li")
+                            li.appendChild(document.createTextNode(user))
+                            ul.appendChild(li)
+                        })
+                    }
+                    break;
+            }
         }
+
+        let userInput = document.getElementById("username");
+        userInput.addEventListener("change", function () {
+            // construct an empty JSON object and populate it with information when someone fills out the username input
+            let jsonData = {};
+            jsonData["action"] = "username";
+            jsonData["username"] = this.value
+            socket.send(JSON.stringify(jsonData))
+        })
     })
 </script>
 {{end}}
