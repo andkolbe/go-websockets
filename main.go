@@ -11,6 +11,20 @@ import (
 )
 
 func main() {
+
+	err := run();
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	mux := routes()
+
+	log.Println("Starting web server on port 8080")
+
+	_ = http.ListenAndServe("127.0.0.1:8080", mux)
+}
+
+func run() error {
 	// .env files
 	if err := godotenv.Load(); err != nil { log.Fatal("Error loading .env file") }
 	dbConnect := os.Getenv("DBCONNECT")
@@ -18,14 +32,10 @@ func main() {
 	database.Connect(dbConnect)
 	log.Println("Connected to DB")
 
-	mux := routes()
-
 	log.Println("Starting channel listener")
 	go handlers.ListenToWSChannel()
 
-	log.Println("Starting web server on port 8080")
-
-	_ = http.ListenAndServe("127.0.0.1:8080", mux)
+	return nil
 }
 
 
