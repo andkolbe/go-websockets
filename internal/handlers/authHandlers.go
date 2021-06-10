@@ -1,9 +1,5 @@
 package handlers
 
-import "github.com/alexedwards/scs/v2"
-
-var session *scs.SessionManager
-
 // import (
 // 	"strconv"
 // 	"time"

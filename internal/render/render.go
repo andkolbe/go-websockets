@@ -14,6 +14,14 @@ var views = jet.NewSet(
 	jet.InDevelopmentMode(), // we don't have to restart our app every time we make a change to a jet template
 )
 
+// allows us to use the views variable in our handlers tests
+func SetViews(path string) {
+	views = jet.NewSet(
+		jet.NewOSFileSystemLoader(path),
+		
+	)
+}
+
 // holds data send from handlers to templates
 type TemplateData struct {
 	CSRFToken string
