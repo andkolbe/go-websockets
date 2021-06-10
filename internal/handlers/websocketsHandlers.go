@@ -1,11 +1,15 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/websocket"
 )
+
+var wsChan = make(chan WSPayload) // this channel only accepts payloads from the client
+var clients = make(map[WebSocketConnection]string) // all of our connected clients
 
 // use this variable to upgrade to websocket connection
 var upgradeConnection = websocket.Upgrader{
@@ -27,7 +31,7 @@ type WebSocketConnection struct {
 }
 
 // the type of information we are sending from the client to the websockets server
-type WsPaylod struct {
+type WSPayload struct {
 	Action   string              `json:"action"`
 	Username string              `json:"username"`
 	Message  string              `json:"message"`
@@ -47,9 +51,66 @@ func WsEndPoint(w http.ResponseWriter, r *http.Request) {
 	var response WSJSONResponse
 	response.Message = `<em><small>Connected to Server</small></em>`
 
+	// when someone new joins the chatroom, add them to the clients map
+	conn := WebSocketConnection{Conn: ws}
+	clients[conn] = ""
+
 	err = ws.WriteJSON(response)
 	if err != nil {
 		log.Println(err)
 	}
 
+	// take everyone who is in our clients map and put them in a new goroutine
+	go ListenForWS(&conn)
 }
+
+func ListenForWS(conn *WebSocketConnection) {
+	// if the goroutine stops for any reason, start again
+	defer func() {
+		if r := recover(); r != nil {
+			log.Println("Error", fmt.Sprintf("%v", r))
+		}
+	}()
+
+	var payload WSPayload
+
+	for {
+		err := conn.ReadJSON(&payload)
+		if err != nil {
+			// do nothing, there is no payload
+		} else {
+			payload.Conn = *conn
+			wsChan <- payload
+		}
+	}
+}
+
+func ListenToWSChannel() {
+	var response WSJSONResponse // what we are sending back the client
+	for {
+		e := <- wsChan
+
+		response.Action = "Got Here"
+		response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
+		broadcaseToAll(response) // broadcase response to all of the connected users
+	}
+}
+
+// broadcase response to all of the connected users
+func broadcaseToAll(response WSJSONResponse) {
+	for client := range clients { // loop through all of the clients
+		err := client.WriteJSON(response) // write the JSON response to all of the connected clients (users)
+		if err != nil {
+			log.Println("websocket err")
+			_ = client.Close() // close that connection for that client
+			delete(clients, client) // remove them from the map
+		}
+	}
+}
+
+/*
+	How does our websockets server handle requests from the client?
+	After someone connects, throw them off to a goroutine that will run forever, that determines what we will do with a particular request from the client
+	When we get a payload coming in, we will determine what to do depending on the action, 
+	and hand that off to another go routine that listens to a specific channel and does different things depending on the content of the payload
+*/ 

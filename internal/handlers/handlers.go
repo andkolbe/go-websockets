@@ -1,9 +1,6 @@
 package handlers
 
 import (
-	// "log"
-	// "net/http"
-
 	"log"
 	"net/http"
 
@@ -35,7 +32,6 @@ func Chat(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 }
-
 
 func renderPage(w http.ResponseWriter, tmpl string, data jet.VarMap) error {
 	view, err := views.GetTemplate(tmpl)

@@ -75,7 +75,8 @@
 
         socket.onmessage = msg => {
             // log whatever we get back from the server
-            console.log(msg)
+            let j = JSON.parse(msg.data)
+            console.log(j)
         }
     })
 </script>
