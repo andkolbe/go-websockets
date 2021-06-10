@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Login</h1>
+</body>
+
+<script>
+    let socket = null; // declare it so we can use it on other javascript functions on the page
+
+    // wait until the document is loaded and then connect to the websocket
+    document.addEventListener("DOMContentLoaded", function() {
+        socket = new WebSocket("ws://127.0.0.1:8080/ws")
+
+        socket.onopen = () => {
+            console.log("Sucessfully connected!")
+        }
+    })
+</script>
+</html>

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/andkolbe/go-websockets/internal/database"
@@ -31,7 +32,18 @@ func main() {
 		AllowCredentials: true, // set to true so the back end can pass the cookie to the front end
 	}))
 
-	routes(app)
+	mux := routes()
 
-	app.Listen("127.0.0.1:3000")
+	log.Println("Starting web server on port 8080")
+
+	_ = http.ListenAndServe("127.0.0.1:8080", mux)
 }
+
+
+/*
+Calling go run main.go results in
+	Your program is compliled inside a temporary folder
+	The compiled binary is executed
+But the temporary folder is just for one execution. 
+So the next time when you run your program via go run another folder is used
+*/
