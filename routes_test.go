@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/bmizerany/pat"
+	"github.com/go-chi/chi/v5"
 )
 
 
@@ -13,9 +13,9 @@ func TestRoutes(t *testing.T) {
 	mux := routes()
 
 	switch mux.(type) {
-	case *pat.PatternServeMux:
+	case *chi.Mux:
 		// do nothing. test passed
 	default:
-		t.Error(fmt.Sprintln("type is not *pat.PatternServeMux"))
+		t.Error(fmt.Sprintln("type is not *chi.Mux"))
 	}
 }
