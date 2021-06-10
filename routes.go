@@ -12,6 +12,7 @@ func routes() http.Handler {
 
 	// middleware allows you process a request as it comes into your web app and perform some action on it
 	mux.Use(NoSurf)
+	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Login)
 	// mux.Post("/", handlers.PostLogin)

@@ -19,6 +19,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
+	
 }
 
 func Chat(w http.ResponseWriter, r *http.Request) {

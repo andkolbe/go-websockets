@@ -20,3 +20,9 @@ func NoSurf(next http.Handler) http.Handler {
 
 	return csrfHandler
 }
+
+// webservers are not state aware, so we need to add middleware that tells this application to remember state using sessions
+// loads and saves the session on every request
+func SessionLoad(next http.Handler) http.Handler {
+	return session.LoadAndSave(next)
+}

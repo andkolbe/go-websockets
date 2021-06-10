@@ -22,3 +22,16 @@ func TestNoSurf(t *testing.T) {
 		t.Error(fmt.Sprintf("type is not http.Handler, but is  %T", v))
 	}
 }
+
+func TestSessionLoad(t *testing.T) {
+	var myH myHandler
+
+	s := SessionLoad(&myH)
+
+	switch v := s.(type) {
+	case http.Handler:
+
+	default:
+		t.Error(fmt.Sprintf("type is not http.Handler, but is %T", v))
+	}
+}
