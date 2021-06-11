@@ -5,7 +5,7 @@ type errors map[string][]string // values are a slice of strings
 // Add has a receiver of errors, so it has access to everything inside of errors
 // adds an error message for a given form field
 func (e errors) Add(field, message string) {
-	e[field] = append(e[field], message) // append errors to the slice 
+	e[field] = append(e[field], message) // append error messages to the slice 
 }
 
 // returns the first error message

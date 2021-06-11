@@ -60,6 +60,7 @@ func TestHandlers(t *testing.T) {
 var loginTests = []struct {
 	name string
 	username string
+	password string
 	expectedStatusCode int
 	expectedHTML string
 	expectedLocation string
@@ -67,10 +68,28 @@ var loginTests = []struct {
 	{
 		"valid-credentials",
 		"test",
+		"",
 		http.StatusSeeOther,
 		"",
 		"/chat",
 	},
+	{
+		"invalid-credentials",
+		"invalidUsername",
+		"",
+		http.StatusSeeOther,
+		"",
+		"/",
+	},
+	// write an invalid data test to check for password validation when I implement it
+	// {
+	// 	"invalid-data",
+	// 	"",
+	// 	"p",
+	// 	http.StatusOK, // status OK because the page rendered correctly, it just rendered a different page than where the user wanted to go
+	// 	`action="/"`,
+	// 	"/",
+	// },
 }
 
 func TestLogin(t *testing.T) {
@@ -97,22 +116,22 @@ func TestLogin(t *testing.T) {
 			t.Errorf("failed %s: exepcted code %d, but got %d", e.name, e.expectedStatusCode, rr.Code)
 		}
 
-		// if e.expectedLocation != "" {
-		// 	// get the URL from test
-		// 	actualLoc, _ := rr.Result().Location()
-		// 	if actualLoc.String() != e.expectedLocation {
-		// 		t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
-		// 	}
-		// }
+		if e.expectedLocation != "" {
+			// get the URL from test
+			actualLoc, _ := rr.Result().Location()
+			if actualLoc.String() != e.expectedLocation {
+				t.Errorf("failed %s: expected location %s, but got location %s", e.name, e.expectedLocation, actualLoc.String())
+			}
+		}
 
-		// // checking for expected values in HTML
-		// if e.expectedHTML != "" {
-		// 	// read the response body into a string
-		// 	html := rr.Body.String()
-		// 	if !strings.Contains(html, e.expectedHTML) {
-		// 		t.Errorf("failed %s: expected to find %s but did not", e.name, e.expectedHTML)
-		// 	}
-		// }
+		// checking for expected values in HTML
+		if e.expectedHTML != "" {
+			// read the response body into a string
+			html := rr.Body.String()
+			if !strings.Contains(html, e.expectedHTML) {
+				t.Errorf("failed %s: expected to find %s but did not", e.name, e.expectedHTML)
+			}
+		}
 	}
 }
 

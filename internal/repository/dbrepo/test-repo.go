@@ -1,6 +1,8 @@
 package dbrepo
 
 import (
+	"errors"
+
 	"github.com/andkolbe/go-websockets/internal/models"
 )
 
@@ -18,7 +20,8 @@ func (m *testDBRepo) Register(user models.User) error {
 }
 
 func (m *testDBRepo) Login(username, testPassword string) (int, string, error) {
-	var id int
-	var hashedPassword string
-	return id, hashedPassword, nil
+	if username == "test" {
+		return 1, "", nil
+	}
+	return 0, "", errors.New("some error")
 }

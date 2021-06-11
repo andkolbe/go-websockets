@@ -1,6 +1,7 @@
 package forms
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 )
@@ -8,12 +9,12 @@ import (
 // hold all information associated with our form either when it is rendered for the first time,
 // or after it is submitted and there might be one or more errors
 type Form struct {
-	url.Values
+	url.Values // holds values for the form
 	Errors errors
 }
 
-// initializes the form struct
-func New(data url.Values) *Form {
+// initializes a new form struct
+func New(data url.Values) *Form { // returns a pointer to a Form
 	return &Form {
 		data,
 		errors(map[string][]string{}),
@@ -23,6 +24,16 @@ func New(data url.Values) *Form {
 // returns true if there are no errors, otherwise return false
 func (f *Form) Valid() bool {
 	return len(f.Errors) == 0
+}
+
+// checks for string minimum length
+func (f *Form) MinLength(field string, length int) bool {
+	x := f.Get(field)
+	if len(x) < length {
+		f.Errors.Add(field, fmt.Sprintf("This field must be at least %d characters long", length))
+		return false
+	}
+	return true
 }
 
 // checks for required fields

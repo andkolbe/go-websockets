@@ -42,3 +42,6 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.RenewToken(r.Context())
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 }
+
+
+// form.MinLength("password", 8) add this to register
