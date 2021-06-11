@@ -7,19 +7,23 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
-	"github.com/andkolbe/go-websockets/internal/database"
+	"github.com/andkolbe/go-websockets/internal/config"
+	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/handlers"
 	"github.com/joho/godotenv"
 )
 
+var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
 
-	err := run();
+	db, err := run();
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	defer db.SQL.Close() // db won't close until the main function stops running. CAn't put it in run() because that only runs once when we open the app
 
 	mux := routes()
 
@@ -28,7 +32,7 @@ func main() {
 	_ = http.ListenAndServe("127.0.0.1:8080", mux)
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 	// .env files
 	if err := godotenv.Load(); err != nil { log.Fatal("Error loading .env file") }
 	dbConnect := os.Getenv("DBCONNECT")
@@ -41,17 +45,28 @@ func run() error {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = false // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
 
-	// connect to db
-	database.Connect(dbConnect)
-	log.Println("Connected to DB")
+	app.Session = session
+
+	// connect to database
+	log.Println("Connecting to database...")
+	db, err := driver.ConnectSQL(dbConnect)
+	if err != nil {
+		log.Fatal("Cannot connect to db. Dying...")
+	}
+	log.Println("Connected to database!")
 
 	// connect to ws
 	log.Println("Starting channel listener")
 	go handlers.ListenToWSChannel()
 
-	return nil
-}
+	// our app config (where we can put whatever we want) and our db (a pointer to a db driver) are available to all of our handlers
+	// right now our db only holds postgres, but if we change or add more in the future, that can easily be refactored
+	repo := handlers.NewRepo(&app, db)
+	// pass the repo variable back to the handlers
+	handlers.NewHandlers(repo)
 
+	return db, nil
+}
 
 /*
 Calling go run main.go results in

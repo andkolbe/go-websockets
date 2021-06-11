@@ -10,8 +10,8 @@ import (
 
 // holds whatever we are posting to a page
 type postData struct {
-	key   string
-	value string
+	// key   string
+	// value string
 }
 
 var theTests = []struct { // slice of structs because we will have more than one test we want to run in our table test
@@ -46,8 +46,6 @@ func TestHandlers(t *testing.T) {
 			if response.StatusCode != e.expectedStatusCode {
 				t.Errorf("for %s, expected %d but got %d", e.name, e.expectedStatusCode, response.StatusCode)
 			}
-		} else { // POST
-
 		}
 	}
 }
