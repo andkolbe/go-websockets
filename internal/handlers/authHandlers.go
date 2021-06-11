@@ -35,6 +35,13 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.App.Session.Put(r.Context(), "user_id", id)
+	m.App.Session.Put(r.Context(), "user_id", id) // add user_id into the session
 	http.Redirect(w, r, "/chat", http.StatusSeeOther)
+}
+
+func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
+	// destroy the session
+	_ = m.App.Session.Destroy(r.Context())
+	_ = m.App.Session.RenewToken(r.Context())
+	http.Redirect(w, r, "/", http.StatusSeeOther)
 }

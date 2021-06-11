@@ -20,7 +20,7 @@ func routes() http.Handler {
 	// mux.Post("/register", handlers.Register)
 	mux.Get("/chat", handlers.Repo.ChatRoomPage)
 	// mux.Get("/user", handlers.User)
-	// mux.Post("/logout", handlers.Logout)
+	mux.Post("/logout", handlers.Repo.Logout)
 	// mux.Post("/forgot", handlers.Forgot)
 	// mux.Post("/reset", handlers.Reset)
 	mux.Get("/ws", handlers.WsEndPoint)

@@ -21,18 +21,23 @@ var views = jet.NewSet(
 func SetViews(path string) {
 	views = jet.NewSet(
 		jet.NewOSFileSystemLoader(path),
-		
 	)
 }
 
 // holds data send from handlers to templates
 type TemplateData struct {
-	CSRFToken string
+	CSRFToken       string
+	IsAuthenticated int
 }
 
 // DefaultData adds default data which is accessible to all templates
 func DefaultData(td TemplateData, r *http.Request, w http.ResponseWriter) TemplateData {
 	td.CSRFToken = nosurf.Token(r)
+
+	// DefaultData has access to the session because it has the request
+	// if app.Session.Exists(r.Context(), "user_id") { // when someone logs in, we put "user_id" in the session
+	// 	td.IsAuthenticated = 1 // 1 means the user is logged in. 0 means the user is logged out
+	// }
 	return td
 }
 
