@@ -25,13 +25,6 @@ func routes() http.Handler {
 	// mux.Post("/reset", handlers.Reset)
 	mux.Get("/ws", handlers.WsEndPoint)
 
-	
-		
-	
-	
-
-
-
 	// if a user is disconnected, and then reconnects, they rejoin automatically
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))

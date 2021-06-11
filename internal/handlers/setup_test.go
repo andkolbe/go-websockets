@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/gob"
 	"net/http"
 	"os"
 	"testing"
@@ -9,6 +10,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/helpers"
+	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/go-chi/chi/v5"
 	"github.com/justinas/nosurf"
 )
@@ -17,7 +19,7 @@ import (
 // responseWriter, request, access to session, all of our routes, middleware
 
 var app config.AppConfig // holds app configuration
-var testSession *scs.SessionManager
+var session *scs.SessionManager
 
 func TestMain(m *testing.M) {
 	// // .env files
@@ -26,11 +28,15 @@ func TestMain(m *testing.M) {
 	// }
 	// dbConnect := os.Getenv("DBCONNECT")
 
-	testSession = scs.New()
-	testSession.Lifetime = 24 * time.Hour 
-	testSession.Cookie.Persist = true     
-	testSession.Cookie.SameSite = http.SameSiteLaxMode
-	testSession.Cookie.Secure = false // not secure for testing
+	gob.Register(models.User{})
+
+	session = scs.New()
+	session.Lifetime = 24 * time.Hour 
+	session.Cookie.Persist = true     
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = false // not secure for testing
+
+	app.Session = session
 
 	helpers.SetViews("./../../views") // allows us to use jet in our testing
 
@@ -49,12 +55,12 @@ func getRoutes() http.Handler {
 	mux.Use(NoSurf)
 	mux.Use(SessionLoad)
 	mux.Get("/", Repo.LoginPage)
-	// mux.Post("/", PostLogin)
+	mux.Post("/", Repo.Login)
 	mux.Get("/register", Repo.RegisterPage)
 	// mux.Post("/register", PostRegister)
-	mux.Get("/auth/chat", Repo.ChatRoomPage)
+	mux.Get("/chat", Repo.ChatRoomPage)
 	// mux.Get("/user", User)
-	// mux.Post("/logout", Logout)
+	mux.Post("/logout", Repo.Logout)
 	// mux.Post("/forgot", Forgot)
 	// mux.Post("/reset", Reset)
 	mux.Get("/ws", WsEndPoint)
@@ -69,7 +75,7 @@ func NoSurf(next http.Handler) http.Handler {
 	csrfHandler := nosurf.New(next)
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
-		Path:     "/", // "/" means apply this cookie to the entire site
+		Path:     "/", 
 		Secure:   false,
 		SameSite: http.SameSiteLaxMode,
 	})
@@ -77,5 +83,5 @@ func NoSurf(next http.Handler) http.Handler {
 }
 
 func SessionLoad(next http.Handler) http.Handler {
-	return testSession.LoadAndSave(next)
+	return session.LoadAndSave(next)
 }
