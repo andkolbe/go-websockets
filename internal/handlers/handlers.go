@@ -54,14 +54,14 @@ func NewHandlers(repo *Repository) {
 // those handlers have access to everything inside of the app config and the database driver
 
 func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
-	err := render.RenderPage(w, r, "login.jet.html", nil)
+	err := helpers.RenderPage(w, r, "login.jet.html", nil)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
 func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
-	err := render.RenderPage(w, r, "register.jet.html", nil)
+	err := helpers.RenderPage(w, r, "register.jet.html", nil)
 	if err != nil {
 		log.Println(err)
 	}
@@ -69,7 +69,7 @@ func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
-	err := render.RenderPage(w, r, "chat.jet.html", nil)
+	err := helpers.RenderPage(w, r, "chat.jet.html", nil)
 	if err != nil {
 		log.Println(err)
 	}

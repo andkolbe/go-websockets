@@ -23,7 +23,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 	form.Required("username", "password")
 	if !form.Valid() {
-		render.RenderPage(w, r, "login.jet.html", nil)
+		helpers.RenderPage(w, r, "login.jet.html", nil)
 		return
 	}
 

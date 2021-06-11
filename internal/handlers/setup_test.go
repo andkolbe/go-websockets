@@ -32,7 +32,7 @@ func TestMain(m *testing.M) {
 	testSession.Cookie.SameSite = http.SameSiteLaxMode
 	testSession.Cookie.Secure = false // not secure for testing
 
-	render.SetViews("./../../views") // allows us to use jet in our testing
+	helpers.SetViews("./../../views") // allows us to use jet in our testing
 
 	repo := NewTestRepo(&app)
 	NewHandlers(repo)
