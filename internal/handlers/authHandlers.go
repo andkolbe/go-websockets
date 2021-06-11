@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/andkolbe/go-websockets/internal/forms"
+	"github.com/andkolbe/go-websockets/internal/helpers"
 )
 
 
@@ -22,7 +23,8 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm)
 	form.Required("username", "password")
 	if !form.Valid() {
-		// TODO - take user back to page
+		render.RenderPage(w, r, "login.jet.html", nil)
+		return
 	}
 
 	id, _, err := m.DB.Login(username, password)

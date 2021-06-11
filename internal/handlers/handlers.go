@@ -6,7 +6,7 @@ import (
 
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/driver"
-	"github.com/andkolbe/go-websockets/internal/render"
+	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/repository"
 	"github.com/andkolbe/go-websockets/internal/repository/dbrepo"
 )

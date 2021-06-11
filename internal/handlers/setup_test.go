@@ -8,7 +8,7 @@ import (
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
-	"github.com/andkolbe/go-websockets/internal/render"
+	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/go-chi/chi/v5"
 	"github.com/justinas/nosurf"
 )
