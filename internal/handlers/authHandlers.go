@@ -17,9 +17,6 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	username := r.Form.Get("username")
-	password := r.Form.Get("password")
-
 	form := forms.New(r.PostForm)
 	form.Required("username", "password")
 	if !form.Valid() {
@@ -27,7 +24,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, _, err := m.DB.Login(username, password)
+	id, _, err := m.DB.Login(r.Form.Get("username"), r.Form.Get("password"))
 	if err != nil {
 		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "invalid login credentials")

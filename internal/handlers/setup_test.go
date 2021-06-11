@@ -52,7 +52,7 @@ func getRoutes() http.Handler {
 	// mux.Post("/", PostLogin)
 	mux.Get("/register", Repo.RegisterPage)
 	// mux.Post("/register", PostRegister)
-	mux.Get("/chat", Repo.ChatRoomPage)
+	mux.Get("/auth/chat", Repo.ChatRoomPage)
 	// mux.Get("/user", User)
 	// mux.Post("/logout", Logout)
 	// mux.Post("/forgot", Forgot)

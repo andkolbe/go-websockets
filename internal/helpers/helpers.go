@@ -27,17 +27,13 @@ func SetViews(path string) {
 // holds data send from handlers to templates
 type TemplateData struct {
 	CSRFToken       string
-	IsAuthenticated int
+	IsAuthenticated bool
 }
 
 // DefaultData adds default data which is accessible to all templates
-func DefaultData(td TemplateData, r *http.Request, w http.ResponseWriter) TemplateData {
+func DefaultData(td TemplateData, r *http.Request) TemplateData {
 	td.CSRFToken = nosurf.Token(r)
 
-	// DefaultData has access to the session because it has the request
-	// if app.Session.Exists(r.Context(), "user_id") { // when someone logs in, we put "user_id" in the session
-	// 	td.IsAuthenticated = 1 // 1 means the user is logged in. 0 means the user is logged out
-	// }
 	return td
 }
 
@@ -46,7 +42,7 @@ func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.Va
 	var td TemplateData
 
 	// add default data
-	td = DefaultData(td, r, w)
+	td = DefaultData(td, r)
 
 	view, err := views.GetTemplate(tmpl)
 	if err != nil {
