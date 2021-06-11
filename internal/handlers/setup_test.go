@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/alexedwards/scs/v2"
+	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/render"
 	"github.com/go-chi/chi/v5"
 	"github.com/justinas/nosurf"
@@ -15,6 +16,7 @@ import (
 // we need a lot of information before we can test our handlers
 // responseWriter, request, access to session, all of our routes, middleware
 
+var app config.AppConfig // holds app configuration
 var testSession *scs.SessionManager
 
 func TestMain(m *testing.M) {
@@ -32,9 +34,8 @@ func TestMain(m *testing.M) {
 
 	render.SetViews("./../../views") // allows us to use jet in our testing
 
-	// // connect to db
-	// database.Connect(dbConnect)
-	// log.Println("Connected to DB")
+	repo := NewTestRepo(&app)
+	NewHandlers(repo)
 
 	// // connect to ws
 	// log.Println("Starting channel listener")
@@ -47,11 +48,11 @@ func getRoutes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Use(NoSurf)
 	mux.Use(SessionLoad)
-	mux.Get("/", Repo.Login)
+	mux.Get("/", Repo.LoginPage)
 	// mux.Post("/", PostLogin)
-	mux.Get("/register", Repo.Register)
+	mux.Get("/register", Repo.RegisterPage)
 	// mux.Post("/register", PostRegister)
-	mux.Get("/chat", Repo.Chat)
+	mux.Get("/chat", Repo.ChatRoomPage)
 	// mux.Get("/user", User)
 	// mux.Post("/logout", Logout)
 	// mux.Post("/forgot", Forgot)

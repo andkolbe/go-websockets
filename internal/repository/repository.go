@@ -1,5 +1,7 @@
 package repository
 
+import "github.com/andkolbe/go-websockets/internal/models"
+
 type DatabaseRepo interface {
-	AllUsers() bool
+	GetUserByID(id int) (models.User, error)
 }

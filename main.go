@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/gob"
 	"log"
 	"net/http"
 	"os"
@@ -10,6 +11,7 @@ import (
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/handlers"
+	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/joho/godotenv"
 )
 
@@ -36,6 +38,9 @@ func run() (*driver.DB, error) {
 	// .env files
 	if err := godotenv.Load(); err != nil { log.Fatal("Error loading .env file") }
 	dbConnect := os.Getenv("DBCONNECT")
+
+	// what I am going to put in the session 
+	gob.Register(models.User{})
 
 	// enable sessions in the main package
 	session = scs.New()

@@ -30,6 +30,14 @@ func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 		DB: dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
+
+func NewTestRepo(a *config.AppConfig) *Repository {
+	return &Repository {
+		App: a,
+		DB: dbrepo.NewTestingRepo(a),
+	}
+}
+
 // when we call newRepo, we pass it the app config (a pointer to config.AppConfig), 
 // and the database connection pool (a pointer to driver.DB, which holds to db connection pool)
 // we then populate the Repository type with all of the information we receive as parameters
@@ -45,14 +53,14 @@ func NewHandlers(repo *Repository) {
 // giving the handlers a receiver links them together with the repository, so all of the handlers have access to the repository
 // those handlers have access to everything inside of the app config and the database driver
 
-func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 	err := render.RenderPage(w, r, "login.jet.html", nil)
 	if err != nil {
 		log.Println(err)
 	}
 }
 
-func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	err := render.RenderPage(w, r, "register.jet.html", nil)
 	if err != nil {
 		log.Println(err)
@@ -60,7 +68,7 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 	
 }
 
-func (m *Repository) Chat(w http.ResponseWriter, r *http.Request) {
+func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
 	err := render.RenderPage(w, r, "chat.jet.html", nil)
 	if err != nil {
 		log.Println(err)

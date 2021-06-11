@@ -12,6 +12,7 @@ type User struct {
 	Email     string
 	Password  []byte
 	CreatedAt time.Time
+	UpdatedAt time.Time
 }
 
 /*
