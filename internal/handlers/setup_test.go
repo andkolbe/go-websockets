@@ -2,17 +2,14 @@ package handlers
 
 import (
 	"encoding/gob"
-	"fmt"
-	"html/template"
-	"log"
 	"net/http"
 	"os"
-	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
+	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/go-chi/chi/v5"
 	"github.com/justinas/nosurf"
@@ -23,8 +20,6 @@ import (
 
 var app config.AppConfig // holds app configuration
 var session *scs.SessionManager
-var pathToTemplates = "./../../views"
-var functions = template.FuncMap{}
 
 func TestMain(m *testing.M) {
 	// // .env files
@@ -43,14 +38,7 @@ func TestMain(m *testing.M) {
 
 	app.Session = session
 
-	// create template cache
-	tc, err := CreateTestTemplateCache()
-	if err != nil {
-		log.Fatal("cannot create template cache")
-	}
-
-	app.TemplateCache = tc
-	app.UseCache = true
+	helpers.SetViews("./../../views") // allows us to use jet in our testing
 
 	repo := NewTestRepo(&app)
 	NewHandlers(repo)
@@ -97,43 +85,3 @@ func NoSurf(next http.Handler) http.Handler {
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
 }
-
-// creates a test template cache as a map
-func CreateTestTemplateCache() (map[string]*template.Template, error) {
-	// create a template cache that holds all our html templates in a map
-	myCache := map[string]*template.Template{} // map with an index of type string and its contents are a pointer to template.Template
-
-	// go to the templates folder, and get all of the files that start with anything but end with .page.html
-	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.html", pathToTemplates))
-	if err != nil {
-		return myCache, err
-	}
-
-	for _, page := range pages {
-		name := filepath.Base(page)
-		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
-		if err != nil {
-			return myCache, err
-
-		}
-
-		// go to the templates folder, and get all of the files that end with .layout.html
-		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.html", pathToTemplates))
-		if err != nil {
-			return myCache, err
-
-		}
-
-		// if a .layout.html match is found, the length will be greater than 0
-		if len(matches) > 0 {
-			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*.layout.html", pathToTemplates))
-			if err != nil {
-				return myCache, err
-
-			}
-		}
-		myCache[name] = ts
-	}
-	return myCache, nil
-}
-

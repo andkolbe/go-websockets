@@ -1,13 +1,12 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/driver"
-	"github.com/andkolbe/go-websockets/internal/forms"
-	"github.com/andkolbe/go-websockets/internal/models"
-	"github.com/andkolbe/go-websockets/internal/render"
+	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/repository"
 	"github.com/andkolbe/go-websockets/internal/repository/dbrepo"
 )
@@ -22,25 +21,24 @@ var Repo *Repository
 // the repository type
 type Repository struct {
 	App *config.AppConfig
-	DB  repository.DatabaseRepo
+	DB repository.DatabaseRepo
 }
-
 // creates a new repository
 func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
-	return &Repository{
+	return &Repository {
 		App: a,
-		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
+		DB: dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 
 func NewTestRepo(a *config.AppConfig) *Repository {
-	return &Repository{
+	return &Repository {
 		App: a,
-		DB:  dbrepo.NewTestingRepo(a),
+		DB: dbrepo.NewTestingRepo(a),
 	}
 }
 
-// when we call newRepo, we pass it the app config (a pointer to config.AppConfig),
+// when we call newRepo, we pass it the app config (a pointer to config.AppConfig), 
 // and the database connection pool (a pointer to driver.DB, which holds to db connection pool)
 // we then populate the Repository type with all of the information we receive as parameters
 // and hand that back as a pointer to Repository
@@ -56,23 +54,23 @@ func NewHandlers(repo *Repository) {
 // those handlers have access to everything inside of the app config and the database driver
 
 func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "login.html", &models.TemplateData{})
+	err := helpers.RenderPage(w, r, "login.jet.html", nil)
+	if err != nil {
+		log.Println(err)
+	}
 }
 
 func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
-	var emptyUser models.User
-	data := make(map[string]interface{})
-	data["user"] = emptyUser
-
-	render.Template(w, "register.html", &models.TemplateData{
-		// pass an empty form and the data variable to the template
-		Form:      forms.New(nil),
-		Data:      data,
-	})
-
+	err := helpers.RenderPage(w, r, "register.jet.html", nil)
+	if err != nil {
+		log.Println(err)
+	}
+	
 }
 
 func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, "chat.html", &models.TemplateData{})
-
+	err := helpers.RenderPage(w, r, "chat.jet.html", nil)
+	if err != nil {
+		log.Println(err)
+	}
 }

@@ -1,9 +1,10 @@
-{{template "base" .}}
-{{define "content"}}
+{{extends "./layouts/layout.jet.html"}}
+{{block css()}}
+
+{{end}}
+{{block body()}}
 <div class="row justify-content-center mt-5">
     <div class="col-lg-6">
-        <!-- store the value of the empty suer the first time this page is displayed in a variable called $res -->
-        {{$res := index .Data "user"}}
         <form class='form-group border rounded shadow bg-primary font-weight-bold p-4'>
             <h4 class='text-center text-light mb-4'>Register</h4>
             <small class='text-light'>* All fields are required</small>
@@ -11,38 +12,35 @@
             <div class="mb-3 mt-1">
                 <div class="input-group">
                     <input class="form-control required" id="username" required autocomplete="off" type='text'
-                        name='username' placeholder='username' value="{{$res.Username}}">
-                    {{with .Form.Errors.Get "username"}}
-                        <label class="text-danger">{{.}}</label>
-                    {{end}}
+                        name='username' placeholder='username' value=''>
                 </div>
             </div>
 
             <div class="mb-3">
                 <div class="input-group">
                     <input class="form-control required" id="first_name" required autocomplete="off" type='text'
-                        name='first_name' placeholder='first name' value="{{$res.FirstName}}">
+                        name='first_name' placeholder='first name' value=''>
                 </div>
             </div>
 
             <div class="mb-3">
                 <div class="input-group">
                     <input class="form-control required" id="last_name" required autocomplete="off" type='text'
-                        name='last_name' placeholder='last name' value="{{$res.LastName}}">
+                        name='last_name' placeholder='last name' value=''>
                 </div>
             </div>
 
             <div class="mb-3">
                 <div class="input-group">
                     <input class="form-control required" id="email" required autocomplete="off" type='email'
-                        name='email' placeholder='email@email.com' value="{{$res.Email}}">
+                        name='email' placeholder='email@email.com' value=''>
                 </div>
             </div>
 
             <div class="mb-3">
                 <div class="input-group">
                     <input class="form-control required" id="password" required autocomplete="off" type='password'
-                        name='password' placeholder='password' value="{{$res.Password}}">
+                        name='password' placeholder='password' value=''>
                 </div>
             </div>
             <small class='text-light'>* Password should be greater than 10 characters and have at least one
@@ -60,6 +58,6 @@
 </div>
 {{end}}
 
-{{define "js"}}
+{{block js()}}
 
 {{end}}

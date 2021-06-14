@@ -1,33 +1,66 @@
 package helpers
 
 import (
-	"fmt"
+	"log"
 	"net/http"
-	"runtime/debug"
 
+	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/config"
+	"github.com/andkolbe/go-websockets/internal/forms"
+	"github.com/justinas/nosurf"
 )
 
 var app *config.AppConfig
 
-// sets up app config for helpers
-func NewHelpers(a *config.AppConfig) {
-	app = a
+// must have this to use the jet templating engine
+var views = jet.NewSet(
+	jet.NewOSFileSystemLoader("./views"),
+	jet.InDevelopmentMode(), // we don't have to restart our app every time we make a change to a jet template
+)
+
+// allows us to use the views variable in our handlers tests
+func SetViews(path string) {
+	views = jet.NewSet(
+		jet.NewOSFileSystemLoader(path),
+	)
 }
 
-func ClientError(w http.ResponseWriter, status int) {
-	// because it is a client error, we need to show the client a response 
-	app.InfoLog.Println("Client error with status of", status)
-	http.Error(w, http.StatusText(status), status)
+// holds data send from handlers to templates
+type TemplateData struct {
+	CSRFToken       string
+	IsAuthenticated bool
+	Form *forms.Form
 }
 
-func ServerError(w http.ResponseWriter, err error) {
-	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
-	app.ErrorLog.Println(trace)
-	http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+// DefaultData adds default data which is accessible to all templates
+func DefaultData(td TemplateData, r *http.Request) TemplateData {
+	td.CSRFToken = nosurf.Token(r)
+
+	return td
 }
 
-func IsAuthenticated(r *http.Request) bool { // return true or false if they are authenticated or not
+func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.VarMap) error {
+	// add default template data
+	var td TemplateData
+
+	// add default data
+	td = DefaultData(td, r)
+
+	view, err := views.GetTemplate(tmpl)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	err = view.Execute(w, data, td)
+	if err != nil {
+		log.Println(err)
+		return err
+	}
+	return nil
+}
+
+// return true or false if the user is authenticated or not
+func IsAuthenticated(r *http.Request) bool {
 	exists := app.Session.Exists(r.Context(), "user_id")
 	return exists
 }

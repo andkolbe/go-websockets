@@ -3,12 +3,11 @@ package main
 import (
 	"net/http"
 
-	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/handlers"
 	"github.com/go-chi/chi/v5"
 )
 
-func routes(app *config.AppConfig) http.Handler {
+func routes() http.Handler {
 	mux := chi.NewRouter()
 
 	// middleware allows you process a request as it comes into your web app and perform some action on it

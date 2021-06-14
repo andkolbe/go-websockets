@@ -10,7 +10,7 @@ import (
 
 func TestRoutes(t *testing.T) { 
 
-	mux := routes(&app)
+	mux := routes()
 
 	switch mux.(type) {
 	case *chi.Mux:

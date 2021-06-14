@@ -1,6 +1,9 @@
-{{template "base" .}}
+{{extends "./layouts/layout.jet.html"}}
+{{block css()}}
 
-{{define "content"}}
+{{end}}
+
+{{block body()}}
 <div class="row justify-content-center mt-5">
     <div class="col-lg-6">
         <form method="POST" action="/"
@@ -16,9 +19,6 @@
                     <input class="form-control required" id="username" required autocomplete="off" type='username'
                         name='username' placeholder='username' value=''>
                 </div>
-                <div class="invalid-feedback">
-                    Please choose a username.
-                  </div>
             </div>
 
             <div class="mb-3">
@@ -42,7 +42,7 @@
 </div>
 {{end}}
 
-{{define "js"}}
+{{block js()}}
 <script>
     let userField = document.getElementById("username")
     let passwordField = document.getElementById("password")
