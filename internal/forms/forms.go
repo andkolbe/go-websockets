@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
+
+	"github.com/asaskevich/govalidator"
 )
 
 // hold all information associated with our form either when it is rendered for the first time,
@@ -43,5 +45,12 @@ func (f *Form) Required(fields ...string) { // ...string means you can pass in a
 		if strings.TrimSpace(value) == "" {// removes any extraneous spaces the user may have filled in by mistake
 			f.Errors.Add(field, "This field cannot be blank")
 		}
+	}
+}
+
+// checks for valid email address
+func (f *Form) IsEmail(field string) {
+	if !govalidator.IsEmail(f.Get(field)) {
+		f.Errors.Add(field, "Invalid email address")
 	}
 }

@@ -1,6 +1,11 @@
 package config
 
-import "github.com/alexedwards/scs/v2"
+import (
+	"html/template"
+	"log"
+
+	"github.com/alexedwards/scs/v2"
+)
 
 // exports to all parts of our application, but doesn't import anything from anywhere else
 // only uses packages already built into our standard library
@@ -8,5 +13,10 @@ import "github.com/alexedwards/scs/v2"
 // our session is initialized in main package but we need to use it in the handlers package. Put it here so it can easily be used in both
 
 type AppConfig struct {
-	Session *scs.SessionManager
+	UseCache      bool
+	TemplateCache map[string]*template.Template
+	InfoLog       *log.Logger
+	ErrorLog      *log.Logger
+	InProduction  bool
+	Session       *scs.SessionManager
 }

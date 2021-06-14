@@ -65,28 +65,33 @@ func (m *postgresDBRepo) UpdateUser(user models.User) error {
 }
 
 // Register
-func (m *postgresDBRepo) Register(user models.User) error {
+func (m *postgresDBRepo) Register(user models.User) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
+	// create a bcrypt hash of the plain-text password
+	hashedPassword, err := bcrypt.GenerateFromPassword(user.Password, 12)
+	if err != nil {
+		return 0, err
+	}
+
 	query := `
 		INSERT INTO users (username, first_name, last_name, email, password) 
-		VALUES ($1, $2, $3, $4, $5)
+		VALUES ($1, $2, $3, $4, $5) returning id
 	`
-
-	_, err := m.DB.ExecContext(ctx, query, 
+	var newId int
+	err = m.DB.QueryRowContext(ctx, query, 
 		&user.Username,
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
-		&user.Password,
-	)
-
+		hashedPassword,
+	).Scan(&newId)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	return newId, err
 }
 
 // Login

@@ -15,8 +15,9 @@ func (m *testDBRepo) UpdateUser(user models.User) error {
 	return nil
 }
 
-func (m *testDBRepo) Register(user models.User) error {
-	return nil
+func (m *testDBRepo) Register(user models.User) (int, error) {
+	var newId int
+	return newId, nil
 }
 
 func (m *testDBRepo) Login(username, testPassword string) (int, string, error) {

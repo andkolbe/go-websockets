@@ -1,0 +1,65 @@
+{{template "base" .}}
+{{define "content"}}
+<div class="row justify-content-center mt-5">
+    <div class="col-lg-6">
+        <!-- store the value of the empty suer the first time this page is displayed in a variable called $res -->
+        {{$res := index .Data "user"}}
+        <form class='form-group border rounded shadow bg-primary font-weight-bold p-4'>
+            <h4 class='text-center text-light mb-4'>Register</h4>
+            <small class='text-light'>* All fields are required</small>
+
+            <div class="mb-3 mt-1">
+                <div class="input-group">
+                    <input class="form-control required" id="username" required autocomplete="off" type='text'
+                        name='username' placeholder='username' value="{{$res.Username}}">
+                    {{with .Form.Errors.Get "username"}}
+                        <label class="text-danger">{{.}}</label>
+                    {{end}}
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <input class="form-control required" id="first_name" required autocomplete="off" type='text'
+                        name='first_name' placeholder='first name' value="{{$res.FirstName}}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <input class="form-control required" id="last_name" required autocomplete="off" type='text'
+                        name='last_name' placeholder='last name' value="{{$res.LastName}}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <input class="form-control required" id="email" required autocomplete="off" type='email'
+                        name='email' placeholder='email@email.com' value="{{$res.Email}}">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <div class="input-group">
+                    <input class="form-control required" id="password" required autocomplete="off" type='password'
+                        name='password' placeholder='password' value="{{$res.Password}}">
+                </div>
+            </div>
+            <small class='text-light'>* Password should be greater than 10 characters and have at least one
+                letter and number.</small>
+
+            <div class='d-flex flex-column'>
+                <button type='submit' class='btn btn-light btn-shadow align-items-end mt-5'>Register</button>
+            </div>
+            <div class='text-center mt-4'>
+                <small class='mr-2 text-light'>Already Have An Account?</small>
+                <small class="text-light">Login!</small>
+            </div>
+        </form>
+    </div>
+</div>
+{{end}}
+
+{{define "js"}}
+
+{{end}}

@@ -1,0 +1,177 @@
+{{template "base" .}}
+{{define "css"}}
+<style>
+    .chatbox {
+        outline: 1px solid blue;
+        min-height: 500px;
+        padding: 0.5em;
+        background-color: #EEF2FF;
+    }
+</style>
+{{end}}
+
+
+
+{{define "body"}
+
+<div class="row">
+    <div class="col">
+        <div class="d-flex align-items-center justify-content-between">
+            <h1 class='mt-3 text-primary'>Go Websockets Chat Room</h1>
+            <a href="/" class='btn btn-primary'>Log Out</a>
+        </div>
+        <hr>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <form class="form-group border rounded shadow bg-primary font-weight-bold p-4">
+            <div class="my-1" id="status">
+                <input type="hidden" name="action" id="action">
+            </div>
+
+            <h5 class="mt-4 text-light">Username Goes Here</h5>
+
+            <div>
+                <input type="text" name="username" id="username" placeholder="Enter Username" class="form-control"
+                    autocomplete="off">
+            </div>
+
+            <hr>
+
+            <div class="d-flex align-items-center justify-content-between mt-3">
+                <input type="text" name="message" id="message" placeholder="Enter Message"
+                    class="form-control flex-grow-1" autocomplete="off">
+                <a href="javascript:void(0);" class="btn btn-light" id="sendBtn">Send</a>
+            </div>
+
+            <div class="chatbox mt-3" id="output">
+
+            </div>
+        </form>
+    </div>
+    <div class="col-md-4">
+
+        <form class="form-group border rounded shadow bg-white font-weight-bold p-4">
+            <!-- <h3><i class="fas fa-comments text-primary"></i>Room Name:</h3> -->
+            <h3><i class="fas fa-users text-primary"></i>Who's Online:</h3>
+
+            <ul id="online_users">
+        </form>
+
+        </ul>
+    </div>
+</div>
+
+
+{{end}}
+
+
+{{define "js"}}
+<!-- <script src="/static/reconnecting-websocket.min.js"></script> -->
+<script>
+    let socket = null; // declare it so we can use it on other javascript functions on the page
+    let output = document.getElementById("output")
+    let userField = document.getElementById("username")
+    let messageField = document.getElementById("message")
+
+    window.onbeforeunload = function () {
+        console.log("Leaving")
+        let jsonData = {}
+        jsonData["action"] = "left"
+        socket.send(JSON.stringify(jsonData))
+    }
+
+    // wait until the document is loaded and then connect to the websocket
+    document.addEventListener("DOMContentLoaded", function () {
+        // socket = new WebSocket("ws://127.0.0.1:8080/ws", null, {
+        //     debug: true, // SET TO FALSE IN PRODUCTION  
+        //     reconnectInterval: 3000 // 3 sec
+        // })
+        socket = new WebSocket("ws://127.0.0.1:8080/ws")
+
+        socket.onopen = () => {
+            console.log("Sucessfully connected!")
+        }
+
+        socket.onclose = () => {
+            console.log("Connection closed")
+        }
+
+        socket.onerror = error => {
+            console.log("There was an error")
+        }
+
+        socket.onmessage = msg => {
+            // handle the response we get back from the user
+            let data = JSON.parse(msg.data)
+            console.log("Action is", data.action)
+
+            switch (data.action) {
+                case "list_users":
+                    let ul = document.getElementById("online_users")
+                    // every time a new user conencts, empty out the list so we can repopulate it with new updated users list
+                    while (ul.firstChild) ul.removeChild(ul.firstChild)
+
+                    // if we have any users, loop through them, create an li, populate the li with the user data, and append the li to the ul
+                    if (data.connected_users.length > 0) {
+                        data.connected_users.forEach(user => {
+                            let li = document.createElement("li")
+                            li.appendChild(document.createTextNode(user))
+                            ul.appendChild(li)
+                        })
+                    }
+                    break;
+                case "broadcast":
+                    output.innerHTML = output.innerHTML + data.message + "<br>";
+                    break;
+            }
+        }
+
+        userField.addEventListener("change", function () {
+            // construct an empty JSON object and populate it with information when someone fills out the username input
+            let jsonData = {};
+            jsonData["action"] = "username";
+            jsonData["username"] = this.value
+            socket.send(JSON.stringify(jsonData))
+        })
+
+        // if you press the enter key to send the message
+        messageField.addEventListener("keydown", e => {
+            if (e.code === "Enter") {
+                if (!socket) {
+                    console.log("no connection")
+                    return false
+                }
+                if ((userField.value === "") || (messageField.value === "")) {
+                    notify("fill out username and message", "error")
+                    return false
+                } else {
+                    sendMessage()
+                }
+                e.preventDefault()
+                e.stopPropagation()
+            }
+        })
+
+        // if you press the button on the screen to send the message
+        document.getElementById("sendBtn").addEventListener("click", () => {
+            if ((userField.value === "") || (messageField.value === "")) {
+                notify("fill out username and message fields", "error")
+                return false
+            } else {
+                sendMessage()
+            }
+        })
+    })
+
+    function sendMessage() {
+        let jsonData = {};
+        jsonData["action"] = "broadcast"
+        jsonData["username"] = userField.value
+        jsonData["message"] = messageField.value
+        socket.send(JSON.stringify(jsonData))
+        messageField.value = ""
+    }
+</script>
+{{end}}
