@@ -62,7 +62,7 @@ func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := helpers.RenderPage(w, r, "login.jet.html", nil)
+	err := helpers.RenderPage(w, r, "login", nil)
 	if err != nil {
 		printTemplateError(w, err)
 	}
@@ -73,7 +73,7 @@ func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 	data := make(jet.VarMap)
 	data.Set("user", emptyUser)
 	
-	err := helpers.RenderPage(w, r, "register.jet.html", data)
+	err := helpers.RenderPage(w, r, "register", data)
 	if err != nil {
 		printTemplateError(w, err)
 	}
@@ -81,7 +81,7 @@ func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
-	err := helpers.RenderPage(w, r, "chat.jet.html", nil)
+	err := helpers.RenderPage(w, r, "chat", nil)
 	if err != nil {
 		printTemplateError(w, err)
 	}

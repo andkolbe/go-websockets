@@ -18,31 +18,22 @@ import (
 var app config.AppConfig
 var session *scs.SessionManager
 
-func main() {
-
-	db, err := run();
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer db.SQL.Close() // db won't close until the main function stops running. Can't put it in run() because that only runs once when we open the app
-
-	mux := routes()
-
-	log.Println("Starting web server on port 8080")
-
-	_ = http.ListenAndServe("127.0.0.1:8080", mux)
+// lets you store users in the session
+func init() {
+	gob.Register(models.User{})
+	_ = os.Setenv("TZ", "America/Birmingham")
 }
 
-func run() (*driver.DB, error) {
+func main() {
+
 	// .env files
-	if err := godotenv.Load(); err != nil { log.Fatal("Error loading .env file") }
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
 	dbConnect := os.Getenv("DBCONNECT")
 
-	// what I am going to put in the session 
-	gob.Register(models.User{})
-
 	// enable sessions in the main package
+	// add redis store
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour // active for 24 hours
 	// stores the session in cookies by default. Can switch to Redis
@@ -70,16 +61,22 @@ func run() (*driver.DB, error) {
 	// pass the repo variable back to the handlers
 	handlers.NewHandlers(repo)
 
-	return db, nil
+	defer db.SQL.Close() // db won't close until the main function stops running
+
+	mux := routes()
+
+	log.Println("Starting web server on port 8080")
+
+	_ = http.ListenAndServe("127.0.0.1:8080", mux)
 }
 
 /*
 Calling go run main.go results in
 	Your program is compliled inside a temporary folder
 	The compiled binary is executed
-But the temporary folder is just for one execution. 
+But the temporary folder is just for one execution.
 So the next time when you run your program via go run another folder is used
-	Change	
+	Change
 _ = http.ListenAndServe(":8080", mux)
 _ = http.ListenAndServe("127.0.0.1:8080", mux)
 */

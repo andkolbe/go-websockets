@@ -3,7 +3,7 @@ package handlers
 import (
 	"log"
 	"net/http"
-	
+
 	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/models"
 )
@@ -20,7 +20,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "invalid login credentials")
-		err := helpers.RenderPage(w, r, "login.jet.html", nil)
+		err := helpers.RenderPage(w, r, "login", nil)
 		if err != nil {
 			printTemplateError(w, err)
 		}

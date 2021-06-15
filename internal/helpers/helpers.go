@@ -1,11 +1,14 @@
 package helpers
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"runtime/debug"
 
 	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/config"
+	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/justinas/nosurf"
 )
 
@@ -28,6 +31,7 @@ func SetViews(path string) {
 type TemplateData struct {
 	CSRFToken       string
 	IsAuthenticated bool
+	User            models.User
 	Flash           string
 	Warning         string
 	Error           string
@@ -47,7 +51,7 @@ func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.Va
 	// add default data
 	td = DefaultData(td, r)
 
-	view, err := views.GetTemplate(tmpl)
+	view, err := views.GetTemplate(fmt.Sprintf("%s.jet.html", tmpl))
 	if err != nil {
 		log.Println(err)
 		return err
@@ -64,4 +68,16 @@ func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.Va
 func IsAuthenticated(r *http.Request) bool {
 	exists := app.Session.Exists(r.Context(), "user_id")
 	return exists
+}
+
+// ServerError will display error page for internal server error
+func ServerError(w http.ResponseWriter, r *http.Request, err error) {
+	trace := fmt.Sprintf("%s\n%s", err.Error(), debug.Stack())
+	_ = log.Output(2, trace)
+
+	w.WriteHeader(http.StatusInternalServerError)
+	w.Header().Set("Connection", "close")
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0")
+	http.ServeFile(w, r, "./ui/static/500.html")
 }

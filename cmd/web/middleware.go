@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
+	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/justinas/nosurf"
 )
 
@@ -25,4 +27,32 @@ func NoSurf(next http.Handler) http.Handler {
 // loads and saves the session on every request
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
+}
+
+// Auth checks for authentication
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !helpers.IsAuthenticated(r) {
+			url := r.URL.Path
+			http.Redirect(w, r, fmt.Sprintf("/?target=%s", url), http.StatusFound)
+			return
+		}
+		w.Header().Add("Cache-Control", "no-store")
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// RecoverPanic recovers from a panic
+func RecoverPanic(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			// Check if there has been a panic
+			if err := recover(); err != nil {
+				// return a 500 Internal Server response
+				helpers.ServerError(w, r, fmt.Errorf("%s", err))
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }
