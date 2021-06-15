@@ -5,46 +5,37 @@
 {{block body()}}
 <div class="row justify-content-center mt-5">
     <div class="col-lg-6">
-        <form method="POST" action="/register" class='form-group border rounded shadow bg-primary font-weight-bold p-4 needs-validation' novalidate>
+        <form method="POST" action="" class='border rounded shadow bg-primary font-weight-bold p-4 needs-validation'
+            novalidate>
             <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
             <h4 class='text-center text-light mb-4'>Register</h4>
             <small class='text-light'>* All fields are required</small>
 
-            <div class="mb-3 mt-1">
-                <div class="input-group">
-                    <input class="form-control required" id="username" required autocomplete="off" type='text'
-                        name='username' placeholder='username' value='{{ user.Username }}'>
-                </div>
+            <div class="form-group mb-3 mt-1">
+                <input class="form-control" id="username" autocomplete="off" type='text' name='username'
+                    placeholder='username' value='{{ user.Username }}' required />
             </div>
 
-            <div class="mb-3">
-                <div class="input-group">
-                    <input class="form-control required" id="first_name" required autocomplete="off" type='text'
-                        name='first_name' placeholder='first name' value='{{ user.FirstName }}'>
-                </div>
+            <div class="form-group mb-3">
+                <input class="form-control" id="first_name" required autocomplete="off" type='text' name='first_name'
+                    placeholder='first name' value='{{ user.FirstName }}' />
             </div>
 
-            <div class="mb-3">
-                <div class="input-group">
-                    <input class="form-control required" id="last_name" required autocomplete="off" type='text'
-                        name='last_name' placeholder='last name' value='{{ user.LastName }}'>
-                </div>
+            <div class="form-group mb-3">
+                <input class="form-control" id="last_name" required autocomplete="off" type='text' name='last_name'
+                    placeholder='last name' value='{{ user.LastName }}' />
             </div>
 
-            <div class="mb-3">
-                <div class="input-group">
-                    <input class="form-control required" id="email" required autocomplete="off" type='email'
-                        name='email' placeholder='email@email.com' value='{{ user.Email }}'>
-                </div>
+            <div class="form-group mb-3">
+                <input class="form-control" id="email" required autocomplete="off" type='email' name='email'
+                    placeholder='email@email.com' value='{{ user.Email }}' />
             </div>
 
-            <div class="mb-3">
-                <div class="input-group">
-                    <input class="form-control required" id="password" required autocomplete="off" type='password'
-                        name='password' placeholder='password' value='{{ user.Password }}'>
-                </div>
+            <div class="form-group mb-3">
+                <input class="form-control" id="password" required autocomplete="off" type='password' name='password'
+                    placeholder='password' value='{{ user.Password }}' />
             </div>
-            <small class='text-light'>* Password should be greater than 10 characters and have at least one
+            <small class='text-light'>* Password should be greater than 8 characters and have at least one
                 letter and number.</small>
 
             <div class='d-flex flex-column'>
@@ -54,6 +45,8 @@
                 <small class='mr-2 text-light'>Already Have An Account?</small>
                 <small class="text-light">Login!</small>
             </div>
+
+            
         </form>
     </div>
 </div>

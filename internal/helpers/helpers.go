@@ -29,7 +29,10 @@ func SetViews(path string) {
 type TemplateData struct {
 	CSRFToken       string
 	IsAuthenticated bool
-	Form *forms.Form
+	Form            *forms.Form
+	Flash           string
+	Warning         string
+	Error           string
 }
 
 // DefaultData adds default data which is accessible to all templates
