@@ -6,7 +6,6 @@ import (
 
 	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/config"
-	"github.com/andkolbe/go-websockets/internal/forms"
 	"github.com/justinas/nosurf"
 )
 
@@ -29,7 +28,6 @@ func SetViews(path string) {
 type TemplateData struct {
 	CSRFToken       string
 	IsAuthenticated bool
-	Form            *forms.Form
 	Flash           string
 	Warning         string
 	Error           string

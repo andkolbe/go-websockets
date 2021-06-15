@@ -57,7 +57,7 @@ func NewHandlers(repo *Repository) {
 
 func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 	// if already logged in, take to chat room
-	if m.App.Session.Exists(r.Context(), "user_id") {
+	if m.App.Session.Exists(r.Context(), "userID") {
 		http.Redirect(w, r, "/chat", http.StatusSeeOther)
 		return
 	}

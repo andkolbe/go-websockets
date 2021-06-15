@@ -3,12 +3,8 @@ package handlers
 import (
 	"log"
 	"net/http"
-
-	"github.com/CloudyKit/jet/v6"
-	"github.com/andkolbe/go-websockets/internal/forms"
+	
 	"github.com/andkolbe/go-websockets/internal/helpers"
-
-	// "github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/models"
 )
 
@@ -19,13 +15,6 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-
-	// form := forms.New(r.PostForm)
-	// form.Required("username", "password")
-	// if !form.Valid() {
-	// 	helpers.RenderPage(w, r, "login.jet.html", nil)
-	// 	return
-	// }
 
 	id, hash, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
 	if err != nil {
@@ -74,17 +63,6 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 		LastName:  r.Form.Get("last_name"),
 		Email:     r.Form.Get("email"),
 		Password:  []byte(r.Form.Get("password")),
-	}
-
-	// create a new form
-	form := forms.New(r.PostForm) // PostForm has all of the url values and their associated data
-	form.Required("username", "first_name", "last_name", "email", "password")
-	form.IsEmail("email")
-	form.MinLength("password", 8) // add this to errors
-	if !form.Valid() {
-		data := make(jet.VarMap)
-		data.Set("user", user) // might be &user
-		return
 	}
 
 	id, err := m.DB.Register(user)
