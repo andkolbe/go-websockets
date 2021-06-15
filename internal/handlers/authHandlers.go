@@ -7,9 +7,10 @@ import (
 	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/forms"
 	"github.com/andkolbe/go-websockets/internal/helpers"
+
+	// "github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/models"
 )
-
 
 func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	_ = m.App.Session.RenewToken(r.Context())
@@ -19,22 +20,37 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	form := forms.New(r.PostForm)
-	form.Required("username", "password")
-	if !form.Valid() {
-		helpers.RenderPage(w, r, "login.jet.html", nil)
-		return
-	}
+	// form := forms.New(r.PostForm)
+	// form.Required("username", "password")
+	// if !form.Valid() {
+	// 	helpers.RenderPage(w, r, "login.jet.html", nil)
+	// 	return
+	// }
 
-	id, _, err := m.DB.Login(r.Form.Get("username"), r.Form.Get("password"))
+	id, hash, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
 	if err != nil {
 		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "invalid login credentials")
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		err := helpers.RenderPage(w, r, "login.jet.html", nil)
+		if err != nil {
+			printTemplateError(w, err)
+		}
 		return
 	}
 
-	m.App.Session.Put(r.Context(), "user_id", id) // add user_id into the session
+	// We authenticated. Get the user
+	u, err := m.DB.GetUserByID(id)
+	if err != nil {
+		log.Println(err)
+		ClientError(w, r, http.StatusBadRequest)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "userID", id)
+	m.App.Session.Put(r.Context(), "hashedPassword", hash)
+	m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
+	m.App.Session.Put(r.Context(), "user", u)
+
 	http.Redirect(w, r, "/chat", http.StatusSeeOther)
 }
 

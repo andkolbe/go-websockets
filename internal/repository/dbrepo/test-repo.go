@@ -20,7 +20,7 @@ func (m *testDBRepo) Register(user models.User) (int, error) {
 	return newId, nil
 }
 
-func (m *testDBRepo) Login(username, testPassword string) (int, string, error) {
+func (m *testDBRepo) Authenticate(username, testPassword string) (int, string, error) {
 	if username == "test" {
 		return 1, "", nil
 	}

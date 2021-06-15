@@ -94,8 +94,8 @@ func (m *postgresDBRepo) Register(user models.User) (int, error) {
 	return newId, err
 }
 
-// Login
-func (m *postgresDBRepo) Login(username, testPassword string) (int, string, error) {
+// Authenticate
+func (m *postgresDBRepo) Authenticate(username, testPassword string) (int, string, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 

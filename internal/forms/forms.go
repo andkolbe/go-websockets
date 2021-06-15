@@ -12,14 +12,15 @@ import (
 // or after it is submitted and there might be one or more errors
 type Form struct {
 	url.Values // holds values for the form
-	Errors errors
+	Errors errors // we created type errors in errors.go
 }
 
 // initializes a new form struct
+// because it is a pointer, we can access it from anywhere and know we are accessing the right form
 func New(data url.Values) *Form { // returns a pointer to a Form
 	return &Form {
 		data,
-		errors(map[string][]string{}),
+		errors(map[string][]string{}), // have to put {} because we are declaring []string to be empty
 	}
 }
 
