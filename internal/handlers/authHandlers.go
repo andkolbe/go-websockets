@@ -4,10 +4,10 @@ import (
 	"log"
 	"net/http"
 
-	// "github.com/CloudyKit/jet/v6"
+	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/forms"
 	"github.com/andkolbe/go-websockets/internal/helpers"
-	// "github.com/andkolbe/go-websockets/internal/models"
+	"github.com/andkolbe/go-websockets/internal/models"
 )
 
 
@@ -46,41 +46,38 @@ func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
 
-	w.Write([]byte("Posted to search availability"))
+	user := models.User{
+		Username:  r.Form.Get("username"), // r.Form.Get("username") matches the name="username" field on the html page
+		FirstName: r.Form.Get("first_name"),
+		LastName:  r.Form.Get("last_name"),
+		Email:     r.Form.Get("email"),
+		Password:  []byte(r.Form.Get("password")),
+	}
 
-	// err := r.ParseForm()
-	// if err != nil {
-	// 	log.Println(err)
-	// 	return
-	// }
+	// create a new form
+	form := forms.New(r.PostForm) // PostForm has all of the url values and their associated data
+	form.Required("username", "first_name", "last_name", "email", "password")
+	form.IsEmail("email")
+	form.MinLength("password", 8) // add this to errors
+	if !form.Valid() {
+		data := make(jet.VarMap)
+		data.Set("user", user) // might be &user
+		return
+	}
 
-	// user := models.User{
-	// 	Username:  r.Form.Get("username"),
-	// 	FirstName: r.Form.Get("first_name"),
-	// 	LastName:  r.Form.Get("last_name"),
-	// 	Email:     r.Form.Get("email"),
-	// 	Password:  []byte(r.Form.Get("password")),
-	// }
+	id, err := m.DB.Register(user)
+	if err != nil {
+		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		return
+	}
 
-	// // create a new form
-	// form := forms.New(r.PostForm) // PostForm has all of the url values and their associated data
-	// form.Required("username", "first_name", "last_name", "email", "password")
-	// form.IsEmail("email")
-	// form.MinLength("password", 8) // add this to errors
-	// if !form.Valid() {
-	// 	data := make(jet.VarMap)
-	// 	data.Set("user", user) // might be &user
-	// 	return
-	// }
-
-	// id, err := m.DB.Register(user)
-	// if err != nil {
-	// 	http.Redirect(w, r, "/register", http.StatusSeeOther)
-	// 	return
-	// }
-
-	// // the user also logs in. Save the new user in the session
-	// m.App.Session.Put(r.Context(), "user_id", id) // add user_id into the session
-	// http.Redirect(w, r, "/chat", http.StatusSeeOther)
+	// the user also logs in. Save the new user in the session
+	m.App.Session.Put(r.Context(), "user_id", id) // add user_id into the session
+	http.Redirect(w, r, "/chat", http.StatusSeeOther)
 }

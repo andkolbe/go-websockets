@@ -25,7 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	defer db.SQL.Close() // db won't close until the main function stops running. CAn't put it in run() because that only runs once when we open the app
+	defer db.SQL.Close() // db won't close until the main function stops running. Can't put it in run() because that only runs once when we open the app
 
 	mux := routes()
 
