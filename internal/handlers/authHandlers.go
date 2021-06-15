@@ -16,7 +16,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 
-	id, hash, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
+	id, _, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
 	if err != nil {
 		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "invalid login credentials")
@@ -27,7 +27,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// We authenticated. Get the user
+	// We authenticated. Get the user and save to session
 	u, err := m.DB.GetUserByID(id)
 	if err != nil {
 		log.Println(err)
@@ -36,7 +36,6 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m.App.Session.Put(r.Context(), "userID", id)
-	m.App.Session.Put(r.Context(), "hashedPassword", hash)
 	m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
 	m.App.Session.Put(r.Context(), "user", u)
 
@@ -71,7 +70,17 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// the user also logs in. Save the new user in the session
-	m.App.Session.Put(r.Context(), "user_id", id) // add user_id into the session
+	// We authenticated. Get the user and save to session
+	u, err := m.DB.GetUserByID(id)
+	if err != nil {
+		log.Println(err)
+		ClientError(w, r, http.StatusBadRequest)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "userID", id)
+	m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
+	m.App.Session.Put(r.Context(), "user", u)
+
 	http.Redirect(w, r, "/chat", http.StatusSeeOther)
 }
