@@ -4,9 +4,11 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/helpers"
+	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/andkolbe/go-websockets/internal/repository"
 	"github.com/andkolbe/go-websockets/internal/repository/dbrepo"
 )
@@ -61,7 +63,11 @@ func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
-	err := helpers.RenderPage(w, r, "register.jet.html", nil)
+	var emptyUser models.User
+	data := make(jet.VarMap)
+	data.Set("user", emptyUser)
+	
+	err := helpers.RenderPage(w, r, "register.jet.html", data)
 	if err != nil {
 		log.Println(err)
 	}

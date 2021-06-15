@@ -18,7 +18,7 @@ func routes() http.Handler {
 	mux.Post("/", handlers.Repo.Login)
 	mux.Get("/chat", handlers.Repo.ChatRoomPage)
 	mux.Get("/register", handlers.Repo.RegisterPage)
-	// mux.Post("/register", handlers.Register)
+	mux.Post("/register", handlers.Repo.Register)
 	// mux.Get("/user", handlers.User)
 	mux.Post("/logout", handlers.Repo.Logout)
 	// mux.Post("/forgot", handlers.Forgot)

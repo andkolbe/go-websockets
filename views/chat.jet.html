@@ -1,5 +1,5 @@
-{{template "base" .}}
-{{define "css"}}
+{{extends "./layouts/layout.jet.html"}}
+{{block css()}}
 <style>
     .chatbox {
         outline: 1px solid blue;
@@ -12,7 +12,7 @@
 
 
 
-{{define "body"}
+{{block body()}}
 
 <div class="row">
     <div class="col">
@@ -67,7 +67,7 @@
 {{end}}
 
 
-{{define "js"}}
+{{block js()}}
 <!-- <script src="/static/reconnecting-websocket.min.js"></script> -->
 <script>
     let socket = null; // declare it so we can use it on other javascript functions on the page
@@ -144,7 +144,7 @@
                     return false
                 }
                 if ((userField.value === "") || (messageField.value === "")) {
-                    notify("fill out username and message", "error")
+                    errorMessage("fill out username and message")
                     return false
                 } else {
                     sendMessage()
@@ -157,7 +157,7 @@
         // if you press the button on the screen to send the message
         document.getElementById("sendBtn").addEventListener("click", () => {
             if ((userField.value === "") || (messageField.value === "")) {
-                notify("fill out username and message fields", "error")
+                errorMessage("fill out username and message fields")
                 return false
             } else {
                 sendMessage()
