@@ -40,6 +40,17 @@ type TemplateData struct {
 // DefaultData adds default data which is accessible to all templates
 func DefaultData(td TemplateData, r *http.Request) TemplateData {
 	td.CSRFToken = nosurf.Token(r)
+	// NEED TO FIGURE OUT WHAT THE PROBLEM IS
+	// td.IsAuthenticated = IsAuthenticated(r)
+	// // if logged in, store user id in template data
+	// if td.IsAuthenticated {
+	// 	u := app.Session.Get(r.Context(), "user").(models.User)
+	// 	td.User = u
+	// }
+
+	// td.Flash = app.Session.PopString(r.Context(), "flash")
+	// td.Warning = app.Session.PopString(r.Context(), "warning")
+	// td.Error = app.Session.PopString(r.Context(), "error")
 
 	return td
 }
@@ -56,8 +67,7 @@ func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.Va
 		log.Println(err)
 		return err
 	}
-	err = view.Execute(w, data, td)
-	if err != nil {
+	if err = view.Execute(w, data, td); err != nil {
 		log.Println(err)
 		return err
 	}
@@ -66,7 +76,7 @@ func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.Va
 
 // return true or false if the user is authenticated or not
 func IsAuthenticated(r *http.Request) bool {
-	exists := app.Session.Exists(r.Context(), "user_id")
+	exists := app.Session.Exists(r.Context(), "userID")
 	return exists
 }
 

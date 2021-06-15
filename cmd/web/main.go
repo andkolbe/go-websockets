@@ -32,6 +32,9 @@ func main() {
 	}
 	dbConnect := os.Getenv("DBCONNECT")
 
+	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
+	app.InProduction = false
+
 	// enable sessions in the main package
 	// add redis store
 	session = scs.New()
@@ -39,7 +42,7 @@ func main() {
 	// stores the session in cookies by default. Can switch to Redis
 	session.Cookie.Persist = true // cookie persists when the browser window is closed
 	session.Cookie.SameSite = http.SameSiteLaxMode
-	session.Cookie.Secure = false // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
+	session.Cookie.Secure = app.InProduction // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
 
 	app.Session = session
 

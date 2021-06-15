@@ -11,6 +11,7 @@ import (
 // our session is initialized in main package but we need to use it in the handlers package. Put it here so it can easily be used in both
 
 type AppConfig struct {
-	DB      *driver.DB
-	Session *scs.SessionManager
+	DB           *driver.DB
+	Session      *scs.SessionManager
+	InProduction bool
 }
