@@ -46,10 +46,6 @@ func IsAuthenticated(r *http.Request) bool { // return true or false if they are
 func DefaultData(td TemplateData, r *http.Request) TemplateData {
 	td.CSRFToken = nosurf.Token(r)
 
-	// td.Flash = app.Session.PopString(r.Context(), "flash")
-	// td.Warning = app.Session.PopString(r.Context(), "warning")
-	// td.Error = app.Session.PopString(r.Context(), "error")
-
 	return td
 }
 

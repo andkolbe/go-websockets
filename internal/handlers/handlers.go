@@ -4,11 +4,9 @@ import (
 	"net/http"
 	
 
-	"github.com/CloudyKit/jet/v6"
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/helpers"
-	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/andkolbe/go-websockets/internal/repository"
 	"github.com/andkolbe/go-websockets/internal/repository/dbrepo"
 )
@@ -75,11 +73,7 @@ func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	
-	var emptyUser models.User
-	data := make(jet.VarMap)
-	data.Set("user", emptyUser)
-	
-	err := helpers.RenderPage(w, r, "register", data)
+	err := helpers.RenderPage(w, r, "register", nil)
 	if err != nil {
 		printTemplateError(w, err)
 	}
@@ -92,4 +86,3 @@ func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
 		printTemplateError(w, err)
 	}
 }
-
