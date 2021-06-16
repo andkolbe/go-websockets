@@ -21,7 +21,7 @@ func routes() http.Handler {
 	mux.Get("/register", handlers.Repo.RegisterPage)
 	mux.Post("/register", handlers.Repo.Register)
 	// mux.Get("/user", handlers.User)
-	mux.Post("/logout", handlers.Repo.Logout)
+	mux.Get("/logout", handlers.Repo.Logout)
 	// mux.Post("/forgot", handlers.Forgot)
 	// mux.Post("/reset", handlers.Reset)
 	mux.Get("/ws", handlers.WsEndPoint)

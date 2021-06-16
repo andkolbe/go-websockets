@@ -96,7 +96,7 @@ func (m *postgresDBRepo) Register(user models.User) (int, error) {
 }
 
 // Authenticate
-func (m *postgresDBRepo) Authenticate(username, testPassword string) (int, string, error) {
+func (m *postgresDBRepo) Authenticate(username, testPassword string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
@@ -106,17 +106,17 @@ func (m *postgresDBRepo) Authenticate(username, testPassword string) (int, strin
 	row := m.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE username = $1", username)
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
-		return id, "", err
+		return id, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(testPassword))
 	if err == bcrypt.ErrMismatchedHashAndPassword {
-		return 0, "", errors.New("incorrect password")
+		return 0, errors.New("incorrect password")
 	} else if err != nil {
-		return 0, "", err
+		return 0, err
 	}
 
-	return id, hashedPassword, nil
+	return id, nil
 }
 
 // UpdatePassword resets a password

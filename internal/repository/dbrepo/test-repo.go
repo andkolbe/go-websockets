@@ -20,9 +20,9 @@ func (m *testDBRepo) Register(user models.User) (int, error) {
 	return newId, nil
 }
 
-func (m *testDBRepo) Authenticate(username, testPassword string) (int, string, error) {
+func (m *testDBRepo) Authenticate(username, testPassword string) (int, error) {
 	if username == "test" {
-		return 1, "", nil
+		return 1, nil
 	}
-	return 0, "", errors.New("some error")
+	return 0, errors.New("some error")
 }

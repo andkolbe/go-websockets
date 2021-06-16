@@ -14,9 +14,11 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		log.Println(err)
+		ClientError(w, r, http.StatusBadRequest)
+		return
 	}
 
-	id, _, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
+	id, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
 	if err != nil {
 		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "invalid login credentials")
