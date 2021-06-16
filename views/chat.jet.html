@@ -34,7 +34,7 @@
 
             <div>
                 <input type="text" name="username" id="username" placeholder="Enter Username" class="form-control"
-                    autocomplete="off">
+                    autocomplete="off" value='{{ user.Username }}'>
             </div>
 
             <hr>
@@ -55,6 +55,9 @@
         <form class="form-group border rounded shadow bg-white font-weight-bold p-4">
             <!-- <h3><i class="fas fa-comments text-primary"></i>Room Name:</h3> -->
             <h3><i class="fas fa-users text-primary"></i>Who's Online:</h3>
+            {{range users}}
+                {{.FirstName}}
+            {{end}}
 
             <ul id="online_users">
         </form>

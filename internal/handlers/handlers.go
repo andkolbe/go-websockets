@@ -81,7 +81,11 @@ func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
-	err := helpers.RenderPage(w, r, "chat", nil)
+	var user models.User
+	data := make(jet.VarMap)
+	data.Set("user", user)
+
+	err := helpers.RenderPage(w, r, "chat", data)
 	if err != nil {
 		printTemplateError(w, err)
 	}

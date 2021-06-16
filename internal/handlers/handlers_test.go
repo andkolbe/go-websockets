@@ -59,7 +59,7 @@ func TestHandlers(t *testing.T) {
 
 var loginTests = []struct {
 	name string
-	username string
+	email string
 	password string
 	expectedStatusCode int
 	expectedHTML string
@@ -75,7 +75,7 @@ var loginTests = []struct {
 	},
 	{
 		"invalid-credentials",
-		"invalidUsername",
+		"invalidEmail",
 		"",
 		http.StatusSeeOther,
 		"",
@@ -96,7 +96,7 @@ func TestLogin(t *testing.T) {
 	// loop through all the tests
 	for _, e := range loginTests {
 		postedData := url.Values{}
-		postedData.Add("username", e.username)
+		postedData.Add("email", e.email)
 		postedData.Add("password", "password")
 
 		// create request

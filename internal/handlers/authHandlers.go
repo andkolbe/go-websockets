@@ -18,7 +18,7 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id, err := m.DB.Authenticate(r.Form.Get("username"), r.Form.Get("password"))
+	id, err := m.DB.Authenticate(r.Form.Get("email"), r.Form.Get("password"))
 	if err != nil {
 		log.Println(err)
 		m.App.Session.Put(r.Context(), "error", "invalid login credentials")
@@ -59,8 +59,7 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	user := models.User{
-		Username:  r.Form.Get("username"), // r.Form.Get("username") matches the name="username" field on the html page
-		FirstName: r.Form.Get("first_name"),
+		FirstName: r.Form.Get("first_name"), // r.Form.Get("first_name") matches the name="first_name" field on the html page
 		LastName:  r.Form.Get("last_name"),
 		Email:     r.Form.Get("email"),
 		Password:  []byte(r.Form.Get("password")),

@@ -19,7 +19,7 @@ func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
 	defer cancel()
 
 	query := `
-		SELECT id, username, first_name, last_name, email, password
+		SELECT id, first_name, last_name, email, password
 		FROM users
 		WHERE id = $1
 	`
@@ -30,7 +30,6 @@ func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
 	var user models.User
 	err := row.Scan(
 		&user.ID,
-		&user.Username,
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
@@ -50,10 +49,9 @@ func (m *postgresDBRepo) UpdateUser(user models.User) error {
 
 	query := `
 		UPDATE users
-		SET username = $1, first_name = $2, last_name = $3, email = $4
+		SET first_name = $2, last_name = $3, email = $4
 	`
 	_, err := m.DB.ExecContext(ctx, query,
-		&user.Username,
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
@@ -77,12 +75,11 @@ func (m *postgresDBRepo) Register(user models.User) (int, error) {
 	}
 
 	query := `
-		INSERT INTO users (username, first_name, last_name, email, password) 
+		INSERT INTO users (first_name, last_name, email, password) 
 		VALUES ($1, $2, $3, $4, $5) returning id
 	`
 	var newId int
 	err = m.DB.QueryRowContext(ctx, query, 
-		&user.Username,
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
@@ -96,14 +93,14 @@ func (m *postgresDBRepo) Register(user models.User) (int, error) {
 }
 
 // Authenticate
-func (m *postgresDBRepo) Authenticate(username, testPassword string) (int, error) {
+func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
 	var id int
 	var hashedPassword string
 
-	row := m.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE username = $1", username)
+	row := m.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE email = $1", email)
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
 		return id, err
