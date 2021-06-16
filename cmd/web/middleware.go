@@ -15,7 +15,7 @@ func NoSurf(next http.Handler) http.Handler {
 	// uses cookies to make sure the token it generates for us is on a per page basis
 	csrfHandler.SetBaseCookie(http.Cookie{
 		HttpOnly: true,
-		Path:     "/", // "/" means apply this cookie to the entire site
+		Path:     "/",              // "/" means apply this cookie to the entire site
 		Secure:   app.InProduction, // CHANGE TO TRUE IN PRODUCTION
 		SameSite: http.SameSiteLaxMode,
 	})
@@ -32,9 +32,9 @@ func SessionLoad(next http.Handler) http.Handler {
 // Auth checks for authentication
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if !helpers.IsAuthenticated(r) {
-			url := r.URL.Path
-			http.Redirect(w, r, fmt.Sprintf("/?target=%s", url), http.StatusFound)
+		if !app.Session.Exists(r.Context(), "userID") {
+			
+			http.Redirect(w, r, "/", http.StatusSeeOther)
 			return
 		}
 		w.Header().Add("Cache-Control", "no-store")

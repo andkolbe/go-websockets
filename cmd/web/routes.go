@@ -17,14 +17,20 @@ func routes() http.Handler {
 
 	mux.Get("/", handlers.Repo.LoginPage)
 	mux.Post("/", handlers.Repo.Login)
-	mux.Get("/chat", handlers.Repo.ChatRoomPage)
 	mux.Get("/register", handlers.Repo.RegisterPage)
 	mux.Post("/register", handlers.Repo.Register)
-	// mux.Get("/user", handlers.User)
 	mux.Get("/logout", handlers.Repo.Logout)
-	// mux.Post("/forgot", handlers.Forgot)
-	// mux.Post("/reset", handlers.Reset)
 	mux.Get("/ws", handlers.WsEndPoint)
+
+	// auth routes
+	mux.Route("/auth", func(mux chi.Router) {
+		// all admin routes are protected
+		mux.Use(Auth)
+
+		mux.Get("/chat", handlers.Repo.ChatRoomPage)
+		
+
+	})
 
 	// if a user is disconnected, and then reconnects, they rejoin automatically
 	fileServer := http.FileServer(http.Dir("./static/"))

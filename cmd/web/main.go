@@ -38,7 +38,7 @@ func main() {
 	// enable sessions in the main package
 	// add redis store
 	session = scs.New()
-	session.Lifetime = 24 * time.Hour // active for 24 hours
+	session.Lifetime = 2 * time.Hour // active for 2 hours
 	// stores the session in cookies by default. Can switch to Redis
 	session.Cookie.Persist = true // cookie persists when the browser window is closed
 	session.Cookie.SameSite = http.SameSiteLaxMode

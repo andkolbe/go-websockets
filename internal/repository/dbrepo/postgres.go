@@ -3,7 +3,6 @@ package dbrepo
 import (
 	"context"
 	"errors"
-	"log"
 	"time"
 
 	"github.com/andkolbe/go-websockets/internal/models"
@@ -116,31 +115,24 @@ func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, error) {
 	return id, nil
 }
 
-// UpdatePassword resets a password
-func (m *postgresDBRepo) UpdatePassword(id int, newPassword string) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
-	defer cancel()
+// func (m *postgresDBRepo) ResetPassword(id int, newPassword string) error {
+// 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+// 	defer cancel()
 
-	// Create a bcrypt hash of the plain-text password.
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
+// 	// Create a bcrypt hash of the plain-text password.
+// 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(newPassword), 12)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return err
+// 	}
 
-	stmt := `update users set password = $1 where id = $2`
-	_, err = m.DB.ExecContext(ctx, stmt, hashedPassword, id)
-	if err != nil {
-		log.Println(err)
-		return err
-	}
+// 	query := `UPDATE users SET password = $1 WHERE id = $2`
 
-	// delete all remember tokens, if any
-	stmt = "delete from remember_tokens where user_id = $1"
-	_, err = m.DB.ExecContext(ctx, stmt, id)
-	if err != nil {
-		return err
-	}
+// 	_, err = m.DB.ExecContext(ctx, query, hashedPassword, id)
+// 	if err != nil {
+// 		log.Println(err)
+// 		return err
+// 	}
 
-	return nil
-}
+// 	return nil
+// }

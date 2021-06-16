@@ -7,12 +7,9 @@ import (
 	"runtime/debug"
 
 	"github.com/CloudyKit/jet/v6"
-	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/justinas/nosurf"
 )
-
-var app *config.AppConfig
 
 // must have this to use the jet templating engine
 var views = jet.NewSet(
@@ -72,12 +69,6 @@ func RenderPage(w http.ResponseWriter, r *http.Request, tmpl string, data jet.Va
 		return err
 	}
 	return nil
-}
-
-// return true or false if the user is authenticated or not
-func IsAuthenticated(r *http.Request) bool {
-	exists := app.Session.Exists(r.Context(), "userID")
-	return exists
 }
 
 // ServerError will display error page for internal server error

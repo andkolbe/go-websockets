@@ -38,10 +38,10 @@ func (m *Repository) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m.App.Session.Put(r.Context(), "userID", id)
-	m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
+	// m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
 	m.App.Session.Put(r.Context(), "user", u)
 
-	http.Redirect(w, r, "/chat", http.StatusSeeOther)
+	http.Redirect(w, r, "/auth/chat", http.StatusSeeOther)
 }
 
 func (m *Repository) Logout(w http.ResponseWriter, r *http.Request) {
@@ -80,8 +80,8 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 	}
 
 	m.App.Session.Put(r.Context(), "userID", id)
-	m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
+	// m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
 	m.App.Session.Put(r.Context(), "user", u)
 
-	http.Redirect(w, r, "/chat", http.StatusSeeOther)
+	http.Redirect(w, r, "/auth/chat", http.StatusSeeOther)
 }

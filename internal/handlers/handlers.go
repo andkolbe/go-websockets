@@ -58,7 +58,7 @@ func NewHandlers(repo *Repository) {
 func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 	// if already logged in, take to chat room
 	if m.App.Session.Exists(r.Context(), "userID") {
-		http.Redirect(w, r, "/chat", http.StatusSeeOther)
+		http.Redirect(w, r, "/auth/chat", http.StatusSeeOther)
 		return
 	}
 
@@ -81,11 +81,7 @@ func (m *Repository) RegisterPage(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *Repository) ChatRoomPage(w http.ResponseWriter, r *http.Request) {
-	var user models.User
-	data := make(jet.VarMap)
-	data.Set("user", user)
-
-	err := helpers.RenderPage(w, r, "chat", data)
+	err := helpers.RenderPage(w, r, "chat", nil)
 	if err != nil {
 		printTemplateError(w, err)
 	}

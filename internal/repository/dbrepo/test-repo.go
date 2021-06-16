@@ -26,3 +26,4 @@ func (m *testDBRepo) Authenticate(email, testPassword string) (int, error) {
 	}
 	return 0, errors.New("some error")
 }
+
