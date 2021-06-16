@@ -7,9 +7,12 @@ import (
 	"runtime/debug"
 
 	"github.com/CloudyKit/jet/v6"
+	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/models"
 	"github.com/justinas/nosurf"
 )
+
+var app *config.AppConfig
 
 // must have this to use the jet templating engine
 var views = jet.NewSet(
@@ -34,16 +37,14 @@ type TemplateData struct {
 	Error           string
 }
 
+func IsAuthenticated(r *http.Request) bool { // return true or false if they are authenticated or not
+	exists := app.Session.Exists(r.Context(), "userID")
+	return exists
+}
+
 // DefaultData adds default data which is accessible to all templates
 func DefaultData(td TemplateData, r *http.Request) TemplateData {
 	td.CSRFToken = nosurf.Token(r)
-	// NEED TO FIGURE OUT WHAT THE PROBLEM IS
-	// td.IsAuthenticated = IsAuthenticated(r)
-	// // if logged in, store user id in template data
-	// if td.IsAuthenticated {
-	// 	u := app.Session.Get(r.Context(), "user").(models.User)
-	// 	td.User = u
-	// }
 
 	// td.Flash = app.Session.PopString(r.Context(), "flash")
 	// td.Warning = app.Session.PopString(r.Context(), "warning")

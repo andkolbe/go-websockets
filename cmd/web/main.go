@@ -7,11 +7,13 @@ import (
 	"os"
 	"time"
 
+	"github.com/alexedwards/scs/redisstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/handlers"
 	"github.com/andkolbe/go-websockets/internal/models"
+	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
 )
 
@@ -35,14 +37,24 @@ func main() {
 	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
 	app.InProduction = false
 
+	// Establish a redigo connection pool.
+	pool := &redis.Pool{
+		MaxIdle: 10,
+		Dial: func() (redis.Conn, error) {
+			return redis.Dial("tcp", "localhost:6379")
+		},
+	}
+
 	// enable sessions in the main package
 	// add redis store
+	log.Printf("Initializing session manager....")
 	session = scs.New()
+	session.Store = redisstore.New(pool)
 	session.Lifetime = 2 * time.Hour // active for 2 hours
 	// stores the session in cookies by default. Can switch to Redis
-	session.Cookie.Persist = true // cookie persists when the browser window is closed
-	session.Cookie.SameSite = http.SameSiteLaxMode
-	session.Cookie.Secure = app.InProduction // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
+	// session.Cookie.Persist = true // cookie persists when the browser window is closed
+	// session.Cookie.SameSite = http.SameSiteLaxMode
+	// session.Cookie.Secure = app.InProduction // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
 
 	app.Session = session
 

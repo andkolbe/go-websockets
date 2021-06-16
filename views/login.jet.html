@@ -4,7 +4,7 @@
 {{end}}
 {{block body()}}
 <div class="row justify-content-center mt-5">
-    <div class="col-lg-6">
+    <div class="col-lg-5">
         <form method="POST" action="/"
             class='form-group border rounded shadow bg-primary font-weight-bold p-4 needs-validation' novalidate>
             <input type='hidden' name='csrf_token' value='{{.CSRFToken}}'>
@@ -14,7 +14,7 @@
 
             <div class="mb-3">
                 <div class="input-group">
-                    <span class="input-group-text"><i class="fas fa-user fa-fw"></i></span>
+                    <span class="input-group-text"><i class="fas fa-envelope fa-fw"></i></span>
                     <input class="form-control required" id="email" required autocomplete="off" type='email'
                         name='email' placeholder='email' value=''>
                     <div class="invalid-feedback">
@@ -39,12 +39,8 @@
                 <button type='submit' id="sendBTN" class='btn btn-light btn-shadow mt-3'>Login</button>
 
                 <div class='text-center mt-2'>
-                    <h6 class='mr-2 text-light'>Need to Create an Account?</h6>
-                    <h5>Register Here!</h5>
-                </div>
-                <div class='text-center mt-2'>
-                    <h6 class='mr-2 text-light'>Forgot Password?</h6>
-                    <h5>Click Here!</h5>
+                    <small class='text-light'>Need to Create an Account?</small>
+                    <a href="/register"><h6>Register Here!</h6></a>
                 </div>
         </form>
     </div>
