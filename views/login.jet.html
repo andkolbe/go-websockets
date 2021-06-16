@@ -29,7 +29,7 @@
                     <input class="form-control required" id="password" required autocomplete="off" type='password'
                         name='password' placeholder='password' value=''>
                     <div class="invalid-feedback">
-                        Please enter a value
+                        Please enter a correct password
                     </div>
                 </div>
             </div>
@@ -50,5 +50,21 @@
 {{end}}
 
 {{block js()}}
-
+<script>
+    (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function (form) {
+                form.addEventListener('submit', function (event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }                    
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+</script>
 {{end}}
