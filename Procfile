@@ -1,1 +1,1 @@
-web: run bat
+web: go build -o go-websockets.exe ./cmd/web/.
