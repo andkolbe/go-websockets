@@ -1,1 +1,1 @@
-web: run bat
+web: bin/

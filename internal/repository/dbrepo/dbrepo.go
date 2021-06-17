@@ -7,10 +7,10 @@ import (
 	"github.com/andkolbe/go-websockets/internal/repository"
 )
 
-// only works with Postgres
-type postgresDBRepo struct {
+// only works with SQL
+type mySQLDBRepo struct {
 	App *config.AppConfig
-	DB *sql.DB // database connection pool. *sql.DB is for postgres
+	DB *sql.DB // database connection pool. *sql.DB is for mySQL
 }
 
 // same as above but for testing
@@ -20,10 +20,10 @@ type testDBRepo struct {
 }
 
 // lets us pass our connection pool and app config and return a repository
-// because we return a pointer to postgresDPRepo, it will connect to postgres
+// because we return a pointer to mySQLDPRepo, it will connect to mySQL
 // we can set up other repos for other dbs in the future
-func NewPostgresRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
-	return &postgresDBRepo {
+func NewMySQLRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
+	return &mySQLDBRepo {
 		App: a,
 		DB: conn,
 	}

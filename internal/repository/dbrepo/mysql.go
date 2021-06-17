@@ -10,7 +10,7 @@ import (
 )
 
 // returns a user by ID
-func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
+func (m *mySQLDBRepo) GetUserByID(id int) (models.User, error) {
 	// if a user loses their connection to the internet while in the middle of submitting data to the db, we want that to close and not go through
 	// this is called a transaction
 	// Go uses something called context to fix this
@@ -20,7 +20,7 @@ func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
 	query := `
 		SELECT id, first_name, last_name, email, password
 		FROM users
-		WHERE id = $1
+		WHERE id = ?
 	`
 
 	// QueryRow on its own doesn't know about context. use QueryRowContext instead
@@ -42,13 +42,13 @@ func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
 }
 
 // updates user in the database
-func (m *postgresDBRepo) UpdateUser(user models.User) error {
+func (m *mySQLDBRepo) UpdateUser(user models.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
 	query := `
 		UPDATE users
-		SET first_name = $2, last_name = $3, email = $4
+		SET first_name = ?, last_name = ?, email = ?
 	`
 	_, err := m.DB.ExecContext(ctx, query,
 		&user.FirstName,
@@ -63,7 +63,7 @@ func (m *postgresDBRepo) UpdateUser(user models.User) error {
 }
 
 // Register
-func (m *postgresDBRepo) Register(user models.User) (int, error) {
+func (m *mySQLDBRepo) Register(user models.User) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
@@ -75,7 +75,7 @@ func (m *postgresDBRepo) Register(user models.User) (int, error) {
 
 	query := `
 		INSERT INTO users (first_name, last_name, email, password) 
-		VALUES ($1, $2, $3, $4, $5) returning id
+		VALUES (?, ?, ?, ?, ?) returning id
 	`
 	var newId int
 	err = m.DB.QueryRowContext(ctx, query, 
@@ -92,14 +92,14 @@ func (m *postgresDBRepo) Register(user models.User) (int, error) {
 }
 
 // Authenticate
-func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, error) {
+func (m *mySQLDBRepo) Authenticate(email, testPassword string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
 	var id int
 	var hashedPassword string
 
-	row := m.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE email = $1", email)
+	row := m.DB.QueryRowContext(ctx, "SELECT id, password FROM users WHERE email = ?", email)
 	err := row.Scan(&id, &hashedPassword)
 	if err != nil {
 		return id, err
@@ -115,7 +115,7 @@ func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, error) {
 	return id, nil
 }
 
-// func (m *postgresDBRepo) ResetPassword(id int, newPassword string) error {
+// func (m *mySQLDBRepo) ResetPassword(id int, newPassword string) error {
 // 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 // 	defer cancel()
 

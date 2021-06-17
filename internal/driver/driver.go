@@ -4,9 +4,8 @@ import (
 	"database/sql"
 	"time"
 
-	_ "github.com/jackc/pgconn"
-	_ "github.com/jackc/pgx/v4/stdlib"
-	_ "github.com/jackc/pgx/v4"
+	_ "github.com/go-sql-driver/mysql"
+
 )
 
 // how we connect our app to the database
@@ -50,7 +49,7 @@ func testDB(d *sql.DB) error {
 
 func NewDatabase(dsn string) (*sql.DB, error) {
 	// connect to db
-	db, err := sql.Open("pgx", dsn)
+	db, err := sql.Open("mysql", dsn)
 	if err != nil {
 		return nil, err
 	}

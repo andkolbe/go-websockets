@@ -27,7 +27,7 @@ type Repository struct {
 func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository {
 		App: a,
-		DB: dbrepo.NewPostgresRepo(db.SQL, a),
+		DB: dbrepo.NewMySQLRepo(db.SQL, a),
 	}
 }
 
