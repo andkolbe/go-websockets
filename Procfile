@@ -1,1 +1,1 @@
-web: go build -o go-websockets.exe ./cmd/web/.
+web: go build -o go-websockets.exe ./cmd/web/. && go-websockets.exe
