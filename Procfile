@@ -1,1 +1,1 @@
-web: go-websockets.exe
+web: go run .
