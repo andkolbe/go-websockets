@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/gob"
+	"fmt"
 	"net/http"
 	"os"
 	"testing"
@@ -54,16 +55,16 @@ func getRoutes() http.Handler {
 	mux := chi.NewRouter()
 	mux.Use(NoSurf)
 	mux.Use(SessionLoad)
+	mux.Use(RecoverPanic)
+
 	mux.Get("/", Repo.LoginPage)
 	mux.Post("/", Repo.Login)
 	mux.Get("/register", Repo.RegisterPage)
-	// mux.Post("/register", PostRegister)
-	mux.Get("/chat", Repo.ChatRoomPage)
-	// mux.Get("/user", User)
-	mux.Post("/logout", Repo.Logout)
-	// mux.Post("/forgot", Forgot)
-	// mux.Post("/reset", Reset)
+	mux.Post("/register", Repo.Register)
+	mux.Get("/logout", Repo.Logout)
 	mux.Get("/ws", WsEndPoint)
+
+	mux.Get("/auth/chat", Repo.ChatRoomPage)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/", http.StripPrefix("/static", fileServer))
@@ -84,4 +85,32 @@ func NoSurf(next http.Handler) http.Handler {
 
 func SessionLoad(next http.Handler) http.Handler {
 	return session.LoadAndSave(next)
+}
+
+// Auth checks for authentication
+func Auth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if !app.Session.Exists(r.Context(), "userID") {
+			
+			http.Redirect(w, r, "/", http.StatusSeeOther)
+			return
+		}
+		w.Header().Add("Cache-Control", "no-store")
+
+		next.ServeHTTP(w, r)
+	})
+}
+
+// RecoverPanic recovers from a panic
+func RecoverPanic(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			// Check if there has been a panic
+			if err := recover(); err != nil {
+				// return a 500 Internal Server response
+				helpers.ServerError(w, r, fmt.Errorf("%s", err))
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }

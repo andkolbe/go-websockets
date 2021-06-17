@@ -7,6 +7,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strings"
+
 	"testing"
 )
 
@@ -26,7 +27,7 @@ var theTests = []struct { // slice of structs because we will have more than one
 	expectedStatusCode int
 }{
 	{"login-page", "/", "GET", []postData{}, http.StatusOK},
-	{"chat-page", "/chat", "GET", []postData{}, http.StatusOK},
+	{"chat-page", "/auth/chat", "GET", []postData{}, http.StatusOK},
 	{"register-page", "/register", "GET", []postData{}, http.StatusOK},
 	{"non-existent", "/nonexistent", "GET", []postData{}, http.StatusNotFound},
 	{"login", "/", "POST", []postData{}, http.StatusNotFound},
@@ -60,36 +61,24 @@ func TestHandlers(t *testing.T) {
 var loginTests = []struct {
 	name string
 	email string
-	password string
 	expectedStatusCode int
 	expectedHTML string
 	expectedLocation string
 }{
 	{
 		"valid-credentials",
-		"test",
-		"",
+		"test@test.com",
 		http.StatusSeeOther,
 		"",
-		"/chat",
+		"/auth/chat",
 	},
 	{
-		"invalid-credentials",
-		"invalidEmail",
+		"invalid-data",
+		"invalid", // not an email
+		http.StatusOK, // status OK because the page rendered correctly, it just rendered a different page than where the user wanted to go
+		`action="/"`,
 		"",
-		http.StatusSeeOther,
-		"",
-		"/",
 	},
-	// write an invalid data test to check for password validation when I implement it
-	// {
-	// 	"invalid-data",
-	// 	"",
-	// 	"p",
-	// 	http.StatusOK, // status OK because the page rendered correctly, it just rendered a different page than where the user wanted to go
-	// 	`action="/"`,
-	// 	"/",
-	// },
 }
 
 func TestLogin(t *testing.T) {
@@ -113,7 +102,7 @@ func TestLogin(t *testing.T) {
 		handler.ServeHTTP(rr, req)
 
 		if rr.Code != e.expectedStatusCode {
-			t.Errorf("failed %s: exepcted code %d, but got %d", e.name, e.expectedStatusCode, rr.Code)
+			t.Errorf("failed %s: expected code %d, but got %d", e.name, e.expectedStatusCode, rr.Code)
 		}
 
 		if e.expectedLocation != "" {

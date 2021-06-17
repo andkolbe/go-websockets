@@ -34,7 +34,8 @@ func main() {
 	}
 	// redisURL := os.Getenv("REDIS_URL")
 	// redisTLSURL := os.Getenv("REDIS_TLS_URL")
-	mySQLConnect := os.Getenv("MYSQLCONNECT")
+	mySQLConnect := os.Getenv("MYSQL_CONNECT")
+	// clearDBURL := os.Getenv("CLEAR_DB_URL")
 
 	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
 	app.InProduction = false
@@ -63,6 +64,7 @@ func main() {
 	// connect to database
 	log.Println("Connecting to database...")
 	db, err := driver.ConnectSQL(mySQLConnect)
+	// db, err := driver.ConnectSQL(clearDBURL)
 	if err != nil {
 		log.Fatal("Cannot connect to db. Dying...")
 	}

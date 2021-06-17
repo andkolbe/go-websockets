@@ -26,10 +26,7 @@ func routes() http.Handler {
 	mux.Route("/auth", func(mux chi.Router) {
 		// all admin routes are protected
 		mux.Use(Auth)
-
 		mux.Get("/chat", handlers.Repo.ChatRoomPage)
-		
-
 	})
 
 	// if a user is disconnected, and then reconnects, they rejoin automatically
