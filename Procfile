@@ -1,1 +1,1 @@
-web: go-websockets.exe ./cmd/web/.
+web: go-websockets
