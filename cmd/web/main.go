@@ -75,7 +75,7 @@ func main() {
 
 	mux := routes()
 
-	log.Println("Starting web server on port 8080")
+	log.Println("Starting web server")
 
 	_ = http.ListenAndServe(":" + os.Getenv("PORT"), mux)
 }
