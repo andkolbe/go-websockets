@@ -1,1 +1,1 @@
-web: go-websockets
+web: go run ./cmd/web/.
