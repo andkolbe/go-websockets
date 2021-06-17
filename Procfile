@@ -1,1 +1,1 @@
-web: bin\go-websockets.exe
+web: go-websockets.exe
