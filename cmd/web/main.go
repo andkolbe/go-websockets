@@ -32,6 +32,7 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 	mySQLConnect := os.Getenv("MYSQL_CONNECT")
+	port := os.Getenv("PORT") // heroku will take this and use their own port number
 
 	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
 	app.InProduction = true
@@ -77,7 +78,7 @@ func main() {
 
 	log.Println("Starting web server")
 
-	_ = http.ListenAndServe(":" + os.Getenv("PORT"), mux)
+	_ = http.ListenAndServe(":" + port, mux)
 }
 
 /*
