@@ -1,11 +1,10 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
-	
 
 	"github.com/andkolbe/go-websockets/internal/config"
-	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/helpers"
 	"github.com/andkolbe/go-websockets/internal/repository"
 	"github.com/andkolbe/go-websockets/internal/repository/dbrepo"
@@ -24,10 +23,10 @@ type Repository struct {
 	DB repository.DatabaseRepo
 }
 // creates a new repository
-func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
+func NewRepo(a *config.AppConfig, db *sql.DB) *Repository {
 	return &Repository {
 		App: a,
-		DB: dbrepo.NewMySQLRepo(db.SQL, a),
+		DB: dbrepo.NewMySQLRepo(db, a),
 	}
 }
 

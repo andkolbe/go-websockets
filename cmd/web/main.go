@@ -1,19 +1,18 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/gob"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"github.com/alexedwards/scs/redisstore"
+	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
-	"github.com/andkolbe/go-websockets/internal/driver"
 	"github.com/andkolbe/go-websockets/internal/handlers"
 	"github.com/andkolbe/go-websockets/internal/models"
-	"github.com/gomodule/redigo/redis"
 	"github.com/joho/godotenv"
 )
 
@@ -32,27 +31,30 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	redisURL := os.Getenv("REDIS_URL")
-	// redisTLSURL := os.Getenv("REDIS_TLS_URL")
 	mySQLConnect := os.Getenv("MYSQL_CONNECT")
 
 	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
-	app.InProduction = false
+	app.InProduction = true
 
-	// Establish a redigo connection pool.
-	pool := &redis.Pool{
-		MaxIdle: 10,
-		Dial: func() (redis.Conn, error) {
-			return redis.Dial("tcp", redisURL)
-			// return redis.Dial("tcp", "localhost:6379")
-		},
+	log.Println("Connecting to database...")
+	db, err := sql.Open("mysql", mySQLConnect)
+	if err != nil {
+		log.Fatal("Cannot connect to db. Dying...")
 	}
+	log.Println("Connected to database!")
+
+	// set some parameters on the db connection pool
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+
+	defer db.Close()
 
 	// enable sessions in the main package
 	// add redis store
 	log.Printf("Initializing session manager....")
 	session = scs.New()
-	session.Store = redisstore.New(pool)
+	session.Store = mysqlstore.New(db)
 	session.Lifetime = 2 * time.Hour // active for 2 hours
 	// stores the session in cookies by default. Can switch to Redis
 	// session.Cookie.Persist = true // cookie persists when the browser window is closed
@@ -60,14 +62,6 @@ func main() {
 	// session.Cookie.Secure = app.InProduction // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
 
 	app.Session = session
-
-	// connect to database
-	log.Println("Connecting to database...")
-	db, err := driver.ConnectSQL(mySQLConnect)
-	if err != nil {
-		log.Fatal("Cannot connect to db. Dying...")
-	}
-	log.Println("Connected to database!")
 
 	// connect to ws
 	log.Println("Starting channel listener")
@@ -78,8 +72,6 @@ func main() {
 	repo := handlers.NewRepo(&app, db)
 	// pass the repo variable back to the handlers
 	handlers.NewHandlers(repo)
-
-	defer db.SQL.Close() // db won't close until the main function stops running
 
 	mux := routes()
 
