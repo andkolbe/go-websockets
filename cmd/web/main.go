@@ -32,7 +32,7 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
-	// redisURL := os.Getenv("REDIS_URL")
+	redisURL := os.Getenv("REDIS_URL")
 	// redisTLSURL := os.Getenv("REDIS_TLS_URL")
 	mySQLConnect := os.Getenv("MYSQL_CONNECT")
 
@@ -43,8 +43,8 @@ func main() {
 	pool := &redis.Pool{
 		MaxIdle: 10,
 		Dial: func() (redis.Conn, error) {
-			// return redis.Dial("tcp", redisURL)
-			return redis.Dial("tcp", "localhost:6379")
+			return redis.Dial("tcp", redisURL)
+			// return redis.Dial("tcp", "localhost:6379")
 		},
 	}
 
