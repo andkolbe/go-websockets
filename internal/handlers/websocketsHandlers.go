@@ -9,7 +9,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var wsChan = make(chan WSPayload) // this channel only accepts payloads from the client
+var wsChan = make(chan WSPayload)                  // this channel only accepts payloads from the client
 var clients = make(map[WebSocketConnection]string) // all of our connected clients
 
 // use this variable to upgrade to websocket connection
@@ -89,7 +89,7 @@ func ListenForWS(conn *WebSocketConnection) {
 func ListenToWSChannel() {
 	var response WSJSONResponse // what we are sending back the client
 	for {
-		e := <- wsChan
+		e := <-wsChan
 
 		switch e.Action {
 		case "username": // if the Action on the event is "username"
@@ -97,7 +97,7 @@ func ListenToWSChannel() {
 			clients[e.Conn] = e.Username
 			users := getUserList()
 			response.Action = "list_users"
-			response.ConnectedUsers  = users
+			response.ConnectedUsers = users
 			broadcaseToAll(response)
 		case "left":
 			// send an action to the users to tell that someone has left
@@ -107,7 +107,7 @@ func ListenToWSChannel() {
 			users := getUserList()
 			response.ConnectedUsers = users
 			broadcaseToAll(response)
-		case "broadcast": 
+		case "broadcast":
 			response.Action = "broadcast"
 			response.Message = fmt.Sprintf("<strong>%s</strong>: %s", e.Username, e.Message)
 			broadcaseToAll(response)
@@ -138,7 +138,7 @@ func broadcaseToAll(response WSJSONResponse) {
 		err := client.WriteJSON(response) // write the JSON response to all of the connected clients (users)
 		if err != nil {
 			log.Println("websocket err")
-			_ = client.Close() // close that connection for that client
+			_ = client.Close()      // close that connection for that client
 			delete(clients, client) // remove them from the map
 		}
 	}
@@ -147,6 +147,6 @@ func broadcaseToAll(response WSJSONResponse) {
 /*
 	How does our websockets server handle requests from the client?
 	After someone connects, throw them off to a goroutine that will run forever, that determines what we will do with a particular request from the client
-	When we get a payload coming in, we will determine what to do depending on the action, 
+	When we get a payload coming in, we will determine what to do depending on the action,
 	and hand that off to another go routine that listens to a specific channel and does different things depending on the content of the payload
-*/ 
+*/
