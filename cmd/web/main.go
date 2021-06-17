@@ -13,7 +13,7 @@ import (
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/handlers"
 	"github.com/andkolbe/go-websockets/internal/models"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 )
 
 var app config.AppConfig
@@ -27,10 +27,10 @@ func init() {
 
 func main() {
 
-	// .env files
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// // .env files
+	// if err := godotenv.Load(); err != nil {
+	// 	log.Fatal("Error loading .env file")
+	// }
 	mySQLConnect := os.Getenv("MYSQL_CONNECT")
 	port := os.Getenv("PORT") // heroku will take this and use their own port number
 
