@@ -31,15 +31,14 @@ func main() {
 	// if err := godotenv.Load(); err != nil {
 	// 	log.Fatal("Error loading .env file")
 	// }
-	// mySQLConnect := os.Getenv("MYSQL_CONNECT")
+	mySQLConnect := os.Getenv("MYSQL_CONNECT")
 	port := os.Getenv("PORT") // heroku will take this and use their own port number
-	clearDBDatabaseURL := os.Getenv("CLEARDB_DATABASE_URL")
 
 	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
 	app.InProduction = true
 
 	log.Println("Connecting to database...")
-	db, err := sql.Open("mysql", clearDBDatabaseURL)
+	db, err := sql.Open("mysql", mySQLConnect)
 	if err != nil {
 		log.Fatal("Cannot connect to db. Dying...")
 	}
