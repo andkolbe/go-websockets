@@ -13,7 +13,6 @@ import (
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/handlers"
 	"github.com/andkolbe/go-websockets/internal/models"
-	// "github.com/joho/godotenv"
 )
 
 var app config.AppConfig
@@ -27,18 +26,21 @@ func init() {
 
 func main() {
 
-	// // .env files
-	// if err := godotenv.Load(); err != nil {
-	// 	log.Fatal("Error loading .env file")
-	// }
-	mySQLConnect := os.Getenv("MYSQL_CONNECT")
+	// env vars
+	dns := os.Getenv("DATABASE_URL")
+	if dns == "" {
+		log.Fatal("$DATABASE_URL is not set.")
+	}
 	port := os.Getenv("PORT") // heroku will take this and use their own port number
+	if port == "" {
+		log.Fatal("$PORT is not set.")
+	}
 
 	// CHANGE THIS TO TRUE WHEN IN PRODUCTION
 	app.InProduction = true
 
 	log.Println("Connecting to database...")
-	db, err := sql.Open("mysql", mySQLConnect)
+	db, err := sql.Open("mysql", dns)
 	if err != nil {
 		log.Fatal("Cannot connect to db. Dying...")
 	}
@@ -90,4 +92,11 @@ So the next time when you run your program via go run another folder is used
 	Change
 _ = http.ListenAndServe(":8080", mux)
 _ = http.ListenAndServe("127.0.0.1:8080", mux)
+*/
+
+/*
+	Setting .env vars in Go
+	type into cli: set PORT=portnumber
+	Check if PORT has been set: echo %PORT%
+	Do the same with DATABASE_URL
 */
