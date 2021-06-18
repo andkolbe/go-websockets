@@ -12,7 +12,7 @@ import (
 var wsChan = make(chan WSPayload)                  // this channel only accepts payloads from the client
 var clients = make(map[WebSocketConnection]string) // all of our connected clients
 
-// use this variable to upgrade to websocket connection
+// use this variable to upgrade incoming requests to websocket connection
 var upgradeConnection = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -40,6 +40,7 @@ type WSPayload struct {
 }
 
 // upgrades connection to websockets and sends back a JSON response
+// used for both submitting new messages to and receivng messages from the chat service
 func WsEndPoint(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgradeConnection.Upgrade(w, r, nil) // we aren't going to worry about the response header right now
 	if err != nil {
