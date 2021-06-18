@@ -83,11 +83,7 @@
 
     // wait until the document is loaded and then connect to the websocket
     document.addEventListener("DOMContentLoaded", function () {
-        // socket = new WebSocket("ws://127.0.0.1:8080/ws", null, {
-        //     debug: true, // SET TO FALSE IN PRODUCTION  
-        //     reconnectInterval: 3000 // 3 sec
-        // })
-        socket = new WebSocket("ws://127.0.0.1:8080/ws")
+        socket = new WebSocket("ws://" + document.location.host + "/ws")
 
         socket.onopen = () => {
             console.log("Sucessfully connected!")

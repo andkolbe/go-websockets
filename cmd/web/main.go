@@ -99,4 +99,9 @@ _ = http.ListenAndServe("127.0.0.1:8080", mux)
 	type into cli: set PORT=portnumber
 	Check if PORT has been set: echo %PORT%
 	Do the same with DATABASE_URL
+
+	In heroku format the CLEARDB_DATABASE_URL from mysql://alphanum-username:alphanum-password@us-cdbr-iron-east-01.cleardb.net/heroku_alphanum_name?reconnect=true
+	to DATABASE_URL bf72ed7dc75b1c:982c4139@tcp(us-cdbr-east-04.cleardb.com)/heroku_b7277b2cda8d5c4
+
+
 */
