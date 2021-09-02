@@ -8,9 +8,9 @@ import (
 )
 
 // only works with SQL
-type mySQLDBRepo struct {
+type postgresDBRepo struct {
 	App *config.AppConfig
-	DB *sql.DB // database connection pool. *sql.DB is for mySQL
+	DB *sql.DB // database connection pool. *sql.DB is for postgres
 }
 
 // same as above but for testing
@@ -20,10 +20,10 @@ type testDBRepo struct {
 }
 
 // lets us pass our connection pool and app config and return a repository
-// because we return a pointer to mySQLDPRepo, it will connect to mySQL
+// because we return a pointer to postgresDPRepo, it will connect to postgres
 // we can set up other repos for other dbs in the future
-func NewMySQLRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
-	return &mySQLDBRepo {
+func NewPostgresRepo(conn *sql.DB, a *config.AppConfig) repository.DatabaseRepo {
+	return &postgresDBRepo {
 		App: a,
 		DB: conn,
 	}

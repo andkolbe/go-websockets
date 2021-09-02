@@ -8,9 +8,10 @@ import (
 	"os"
 	"time"
 
-	// _ "github.com/go-sql-driver/mysql"
+	_ "github.com/jackc/pgx/v4/stdlib"
 
-	"github.com/alexedwards/scs/mysqlstore"
+	_ "github.com/lib/pq"
+
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
 	"github.com/andkolbe/go-websockets/internal/handlers"
@@ -29,9 +30,9 @@ func init() {
 func main() {
 
 	// env vars
-	dns := os.Getenv("DATABASE_URL")
+	dns := os.Getenv("HEROKU_POSTGRESQL_AMBER_URL")
 	if dns == "" {
-		log.Fatal("$DATABASE_URL is not set.")
+		log.Fatal("DATABASE_URL is not set.")
 	}
 	port := os.Getenv("PORT") // heroku will take this and use their own port number
 	if port == "" {
@@ -42,7 +43,7 @@ func main() {
 	app.InProduction = true
 
 	log.Println("Connecting to database...")
-	db, err := sql.Open("mysql", dns)
+	db, err := sql.Open("pgx", dns)
 	if err != nil {
 		log.Fatal("Cannot connect to db. Dying...")
 	}
@@ -58,13 +59,11 @@ func main() {
 	// enable sessions in the main package
 	log.Printf("Initializing session manager....")
 	session = scs.New()
-	session.Store = mysqlstore.New(db)
 	session.Lifetime = 2 * time.Hour // active for 2 hours
 	// stores the session in cookies by default. Can switch to Redis
-	// session.Cookie.Persist = true // cookie persists when the browser window is closed
-	// session.Cookie.SameSite = http.SameSiteLaxMode
-	// session.Cookie.Secure = app.InProduction // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
-
+	session.Cookie.Persist = true // cookie persists when the browser window is closed
+	session.Cookie.SameSite = http.SameSiteLaxMode
+	session.Cookie.Secure = app.InProduction // makes sure the cookies are encrypted and use https. CHANGE TO TRUE FOR PRODUCTION
 	app.Session = session
 
 	// connect to ws

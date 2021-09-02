@@ -66,24 +66,24 @@ func (m *Repository) Register(w http.ResponseWriter, r *http.Request) {
 		Password:  []byte(r.Form.Get("password")),
 	}
 
-	err = m.DB.Register(user)
+	id, err := m.DB.Register(user)
 	if err != nil {
-		fmt.Println("Error")
 		http.Redirect(w, r, "/register", http.StatusSeeOther)
+		fmt.Println(err)
 		return
 	}
 
-	// // We authenticated. Get the user and save to session
-	// u, err := m.DB.GetUserByID(id)
-	// if err != nil {
-	// 	log.Println(err)
-	// 	ClientError(w, r, http.StatusBadRequest)
-	// 	return
-	// }
+	// We authenticated. Get the user and save to session
+	u, err := m.DB.GetUserByID(id)
+	if err != nil {
+		log.Println(err)
+		ClientError(w, r, http.StatusBadRequest)
+		return
+	}
 
-	// m.App.Session.Put(r.Context(), "userID", id)
-	// // m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
-	// m.App.Session.Put(r.Context(), "user", u)
+	m.App.Session.Put(r.Context(), "userID", id)
+	// m.App.Session.Put(r.Context(), "flash", "You've been logged in successfully!")
+	m.App.Session.Put(r.Context(), "user", u)
 
 	http.Redirect(w, r, "/auth/chat", http.StatusSeeOther)
 }

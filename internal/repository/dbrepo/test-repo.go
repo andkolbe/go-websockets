@@ -1,3 +1,4 @@
+  
 package dbrepo
 
 import (
@@ -15,9 +16,9 @@ func (m *testDBRepo) UpdateUser(user models.User) error {
 	return nil
 }
 
-func (m *testDBRepo) Register(user models.User) error {
-
-	return nil
+func (m *testDBRepo) Register(user models.User) (int, error) {
+	var newId int
+	return newId, nil
 }
 
 func (m *testDBRepo) Authenticate(email, testPassword string) (int, error) {
@@ -26,4 +27,3 @@ func (m *testDBRepo) Authenticate(email, testPassword string) (int, error) {
 	}
 	return 0, errors.New("some error")
 }
-
