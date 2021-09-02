@@ -51,6 +51,7 @@ func NewHandlers(repo *Repository) {
 
 // giving the handlers a receiver links them together with the repository, so all of the handlers have access to the repository
 // those handlers have access to everything inside of the app config and the database driver
+// with receivers, Go doesn't have to mess around with classes or inheritance
 
 func (m *Repository) LoginPage(w http.ResponseWriter, r *http.Request) {
 	// if already logged in, take to chat room

@@ -63,9 +63,11 @@ func WsEndPoint(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// take everyone who is in our clients map and put them in a new goroutine
+	// goroutines always start with the go keyword
 	go ListenForWS(&conn)
 }
 
+// goroutine 
 func ListenForWS(conn *WebSocketConnection) {
 	// if the goroutine stops for any reason, start again
 	defer func() {
@@ -87,6 +89,7 @@ func ListenForWS(conn *WebSocketConnection) {
 	}
 }
 
+// goroutine
 func ListenToWSChannel() {
 	var response WSJSONResponse // what we are sending back the client
 	for {
@@ -113,10 +116,6 @@ func ListenToWSChannel() {
 			response.Message = fmt.Sprintf("<strong>%s</strong>: %s", e.Username, e.Message)
 			broadcaseToAll(response)
 		}
-
-		// response.Action = "Got Here"
-		// response.Message = fmt.Sprintf("Some message, and action was %s", e.Action)
-		// broadcaseToAll(response) // broadcase response to all of the connected users
 	}
 }
 

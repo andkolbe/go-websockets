@@ -3,6 +3,7 @@ package dbrepo
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/andkolbe/go-websockets/internal/models"
@@ -63,32 +64,33 @@ func (m *mySQLDBRepo) UpdateUser(user models.User) error {
 }
 
 // Register
-func (m *mySQLDBRepo) Register(user models.User) (int, error) {
+func (m *mySQLDBRepo) Register(user models.User) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 3 * time.Second) // cancel transaction if it takes longer than 3 seconds to complete
 	defer cancel()
 
 	// create a bcrypt hash of the plain-text password
 	hashedPassword, err := bcrypt.GenerateFromPassword(user.Password, 12)
 	if err != nil {
-		return 0, err
+		return err
 	}
 
 	query := `
 		INSERT INTO users (first_name, last_name, email, password) 
-		VALUES (?, ?, ?, ?, ?) returning id
+		VALUES (?, ?, ?, ?);
 	`
-	var newId int
-	err = m.DB.QueryRowContext(ctx, query, 
+	
+	resultPost := m.DB.QueryRowContext(ctx, query, 
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
 		hashedPassword,
-	).Scan(&newId)
+	)
 	if err != nil {
-		return 0, err
+		fmt.Println("new error")
+		return err
 	}
-
-	return newId, err
+	fmt.Println("resultPost is:", resultPost)
+	return nil
 }
 
 // Authenticate

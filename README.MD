@@ -9,3 +9,5 @@ A chat room app that lets users sign up and chat with their friends in real time
 - Users and Sessions saved in MySQL
 - Deployed with Heroku
 
+Run the project by typing "run bat" in the command line
+

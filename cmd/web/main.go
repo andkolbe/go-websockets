@@ -8,6 +8,8 @@ import (
 	"os"
 	"time"
 
+	// _ "github.com/go-sql-driver/mysql"
+
 	"github.com/alexedwards/scs/mysqlstore"
 	"github.com/alexedwards/scs/v2"
 	"github.com/andkolbe/go-websockets/internal/config"
@@ -51,10 +53,9 @@ func main() {
 	db.SetMaxOpenConns(10)
 	db.SetMaxIdleConns(10)
 
-	defer db.Close()
+	defer db.Close() // whatever comes after the defer keyword, execute that as soon as the function is done
 
 	// enable sessions in the main package
-	// add redis store
 	log.Printf("Initializing session manager....")
 	session = scs.New()
 	session.Store = mysqlstore.New(db)
@@ -80,7 +81,8 @@ func main() {
 
 	log.Println("Starting web server")
 
-	_ = http.ListenAndServe(":" + port, mux)
+	_ = http.ListenAndServe(":"+port, mux)
+	// _ = http.ListenAndServe("127.0.0.1:8080", mux)
 }
 
 /*
@@ -102,6 +104,5 @@ _ = http.ListenAndServe("127.0.0.1:8080", mux)
 
 	In heroku format the CLEARDB_DATABASE_URL from mysql://alphanum-username:alphanum-password@us-cdbr-iron-east-01.cleardb.net/heroku_alphanum_name?reconnect=true
 	to DATABASE_URL bf72ed7dc75b1c:982c4139@tcp(us-cdbr-east-04.cleardb.com)/heroku_b7277b2cda8d5c4
-
 
 */
